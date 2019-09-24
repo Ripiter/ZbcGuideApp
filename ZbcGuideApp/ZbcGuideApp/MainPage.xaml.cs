@@ -12,7 +12,7 @@ namespace ZbcGuideApp
     {
         public MainPage()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
 
     }
