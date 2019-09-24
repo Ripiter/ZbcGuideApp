@@ -11,7 +11,9 @@ namespace ZbcGuideApp
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            //MainPage = new MainPage();
+            MainPage = new NavigationPage(new MainPage());
+
         }
 
         protected override void OnStart()
@@ -28,5 +30,7 @@ namespace ZbcGuideApp
         {
             // Handle when your app resumes
         }
+        
+     
     }
 }

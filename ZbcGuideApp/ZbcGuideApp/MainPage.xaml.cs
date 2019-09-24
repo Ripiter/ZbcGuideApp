@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Android.Runtime;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,6 +15,9 @@ namespace ZbcGuideApp
         {
             InitializeComponent();
         }
-
+        async private void NewPage(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new GpsLocationXaml());
+        }
     }
 }
