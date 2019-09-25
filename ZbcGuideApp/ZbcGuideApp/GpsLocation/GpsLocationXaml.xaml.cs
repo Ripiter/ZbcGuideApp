@@ -20,7 +20,6 @@ namespace ZbcGuideApp
 		}
 
 
-
         private async void Button_Clicked(object sender, EventArgs e)
         {
             await GetLocation();
