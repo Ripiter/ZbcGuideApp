@@ -6,6 +6,7 @@ using Android.Support.V4.App;
 using Android.Support.V4.Content;
 using System;
 
+
 namespace ZbcGuideApp.Droid
 {
 
@@ -16,6 +17,14 @@ namespace ZbcGuideApp.Droid
         {
             Plugin.CurrentActivity.CrossCurrentActivity.Current.Init(this, savedInstanceState);
             test.context = this;
+            if(ContextCompat.CheckSelfPermission(this,Manifest.Permission.AccessCoarseLocation) != Permission.Granted){
+                
+                    ActivityCompat.RequestPermissions(this, new string[] { Manifest.Permission.AccessCoarseLocation,
+                                                                       Manifest.Permission.ChangeWifiState,
+                                                                       Manifest.Permission.AccessFineLocation}
+                                                                       , 0);
+                
+            }
 
 
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -31,10 +40,19 @@ namespace ZbcGuideApp.Droid
         {
             Permission a = ContextCompat.CheckSelfPermission(this, Manifest.Permission.ReadPhoneState);
             Permission b = ContextCompat.CheckSelfPermission(this, Manifest.Permission.ChangeWifiState);
+            Permission c = ContextCompat.CheckSelfPermission(this, Manifest.Permission.AccessCoarseLocation);
 
 
             if (a != Permission.Granted)
                 ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.ReadPhoneState, Manifest.Permission.ChangeWifiState }, requestCode);
+            
+            //if (c != Permission.Granted)
+            //    RequestPermissions(this, new String[] { Manifest.Permission.AccessCoarseLocation,
+            //                                                           Manifest.Permission.ChangeWifiState,
+            //                                                           Manifest.Permission.AccessFineLocation,
+            //                                                           Manifest.Permission.ChangeWifiState,
+            //                                                           Manifest.Permission.AccessFineLocation
+            //                                                         }, requestCode);
 
             //if(b != Permission.Granted)
             //    ActivityCompat.RequestPermissions(this, new String[] { Manifest.Permission.ChangeWifiState }, requestCode);

@@ -3,6 +3,9 @@ using Android.Net.Wifi;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+
+
 namespace ZbcGuideApp
 {
     public class test
@@ -17,6 +20,7 @@ namespace ZbcGuideApp
         public test()
         {
             oc = new ObservableCollection<AccessPoint>();
+            
             //GetWifiNetworks();
         }
 
@@ -33,25 +37,22 @@ namespace ZbcGuideApp
             context.RegisterReceiver(wifiReceiver, new IntentFilter(WifiManager.ScanResultsAvailableAction));
             try
             {
-                System.Diagnostics.Debug.WriteLine("seding in test");
-                wifi.StartScan();
-            }catch(Exception e)
-            {
-                System.Diagnostics.Debug.WriteLine(e.Message);
+                Debug.WriteLine("seding in test");
+                Debug.WriteLine( wifi.StartScan());
             }
-           
-           
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
         }
-
         class WifiReceiver : BroadcastReceiver
         {
-         
             string printInfo = string.Empty;
             IList<ScanResult> scanwifinetworks = null;
             public override void OnReceive(Context context, Intent intent)
             {
-                System.Diagnostics.Debug.WriteLine("Receve");
-                
+                Debug.WriteLine("Receve");
+
                 //oc.Clear();
                 scanwifinetworks = wifi.ScanResults;
                 foreach (ScanResult wifinetwork in scanwifinetworks)
@@ -60,10 +61,10 @@ namespace ZbcGuideApp
 
                     oc.Add(new AccessPoint() { Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level, PrintInfo = printInfo });
 
-                    System.Diagnostics.Debug.WriteLine(printInfo);
+                    Debug.WriteLine(printInfo);
                 }
-                    wifi.ScanResults.Clear();
-                    scanwifinetworks.Clear();
+                wifi.ScanResults.Clear();
+                scanwifinetworks.Clear();
             }
         }
     }

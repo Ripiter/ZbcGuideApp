@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Android;
 
 namespace ZbcGuideApp
 {
@@ -24,6 +25,9 @@ namespace ZbcGuideApp
 
         private void GetStrenght(object sender, EventArgs e)
         {
+            
+
+
             if (test.oc.Count != 0)
                 test.oc.Clear();
             System.Diagnostics.Debug.WriteLine("button clicked");
@@ -33,8 +37,8 @@ namespace ZbcGuideApp
 
             ListOfAccessPoints.ItemsSource = test.oc;
 
-            //List<AccessPoint> testData = new List<AccessPoint>() { new AccessPoint() { PrintInfo = "a" }, new AccessPoint() { Ssid = "0", Strenght = -1, PrintInfo = "Bye" } };
-            //ListOfAccessPoints.ItemsSource = accessPoints;
+            ////List<AccessPoint> testData = new List<AccessPoint>() { new AccessPoint() { PrintInfo = "a" }, new AccessPoint() { Ssid = "0", Strenght = -1, PrintInfo = "Bye" } };
+            ////ListOfAccessPoints.ItemsSource = accessPoints;
         }
     }
 
