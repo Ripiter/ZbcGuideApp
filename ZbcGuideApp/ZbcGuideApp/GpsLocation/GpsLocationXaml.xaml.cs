@@ -29,7 +29,7 @@ namespace ZbcGuideApp
         {
             Debug.WriteLine("Clicked");
             var locator = CrossGeolocator.Current;
-            locator.DesiredAccuracy = 20;
+            locator.DesiredAccuracy = 20; 
 
             var position = await locator.GetPositionAsync(TimeSpan.FromSeconds(1000));
             
