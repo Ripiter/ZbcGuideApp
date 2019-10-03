@@ -49,7 +49,7 @@ namespace ZbcGuideApp
             public override void OnReceive(Context context, Intent intent)
             {
                 scanwifinetworks = wifi.ScanResults;
-                foreach (ScanResult wifinetwork in scanwifinetworks)
+                foreach (ScanResult wifinetwork in scanwifinetworks) 
                 {
                     //printInfo = "Mac address " + wifinetwork.Bssid + " with name " + wifinetwork.Ssid + " with lvl dBm " + wifinetwork.Level;
                     printInfo = wifinetwork.Ssid + " with lvl dBm " + wifinetwork.Level;
