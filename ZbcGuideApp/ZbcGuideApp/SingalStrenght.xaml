@@ -17,7 +17,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button Clicked="GetStrenght" Text="Hiii"></Button>
+            <Button Clicked="GetStrenght" Text="Hiiii"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
