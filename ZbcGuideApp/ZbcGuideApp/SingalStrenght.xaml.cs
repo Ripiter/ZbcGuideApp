@@ -21,12 +21,17 @@ namespace ZbcGuideApp
         {
             InitializeComponent();
             a = new WifiConnection();
-            
             //wifiChecker = new Thread(CheckForWifi);
         }
 
         private async void GetStrenght(object sender, EventArgs e)
         {
+            if (WifiConnection.searching == true)
+            {
+                System.Diagnostics.Debug.WriteLine(WifiConnection.searching);
+                return;
+            }
+
             LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
             if (mc.IsProviderEnabled(LocationManager.GpsProvider))
                 System.Diagnostics.Debug.WriteLine("Enabled");
