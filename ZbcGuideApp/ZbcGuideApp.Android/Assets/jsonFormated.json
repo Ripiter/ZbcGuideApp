@@ -1,0 +1,30 @@
+{
+  "a4:08:f5:17:1c:ee": {
+    "city": "Roskilde",
+    "name": "It-SKP",
+    "floor": "1",
+    "x": "392",
+    "y": "484"
+  },
+  "b4:5d:50:8f:27:21": {
+    "city": "Roskilde",
+    "name": "ZBC Guest",
+    "floor": "1",
+    "x": "420",
+    "y": "463"
+  },
+  "ac:a3:1e:f5:f0:c3": {
+    "city": "Roskilde",
+    "name": "ZBC Guest",
+    "floor": "1",
+    "x": "466",
+    "y": "488"
+  },
+  "ac:a3:1e:f5:eb:61": {
+    "city": "Roskilde",
+    "name": "ZBC Guest",
+    "floor": "1",
+    "x": "493",
+    "y": "463"
+  }
+}

@@ -10,19 +10,52 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Android;
 using Android.Locations;
+using System.IO;
+using SkiaSharp;
+using SkiaSharp.Views.Forms;
 
 namespace ZbcGuideApp
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class SingalStrenght : ContentPage
 	{
+        SKBitmap resourceBitmap;
+        SKMatrix matrix = SKMatrix.MakeIdentity();
         WifiConnection a;
         public SingalStrenght()
         {
+            
             InitializeComponent();
             a = new WifiConnection();
             //wifiChecker = new Thread(CheckForWifi);
+            canvasView = new SKCanvasView();
+            canvasView.PaintSurface += OnCanvasViewPaintSurface;
+            Content = canvasView;
+
+            using (Stream abc = Android.App.Application.Context.Assets.Open("potato.bmp"))
+                resourceBitmap = SKBitmap.Decode(abc);
         }
+
+        void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
+        {
+            SKImageInfo info = args.Info;
+            SKSurface surface = args.Surface;
+            SKCanvas canvas = surface.Canvas;
+
+            canvas.Clear();
+            if (resourceBitmap != null)
+            {
+                canvas.Scale(-1, 1, info.Width / 2, 0);
+                canvas.SetMatrix(matrix);
+                
+                //works
+                resourceBitmap.SetPixel(1, 1, SKColor.Parse("#000000"));
+
+                
+                canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 3));
+            }
+        }
+
 
         private async void GetStrenght(object sender, EventArgs e)
         {

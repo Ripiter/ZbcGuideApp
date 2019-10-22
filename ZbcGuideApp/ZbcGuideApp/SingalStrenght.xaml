@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:tt="clr-namespace:TouchTracking"
              x:Class="ZbcGuideApp.SingalStrenght">
     <ContentPage.Content>
         <StackLayout>
@@ -8,16 +10,21 @@
                 VerticalOptions="CenterAndExpand" 
                 HorizontalOptions="CenterAndExpand" />
             <Label Text="Hello world x5"></Label>
-            <Label x:Name="LoadingLabel" Text="Loading"> </Label>
+            <Label x:Name="LoadingLabel" Text="Loading"></Label>
             <ListView x:Name="ListOfAccessPoints">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextCell Text="{Binding PrintInfo}">
-                        </TextCell>
+                        <TextCell Text="{Binding PrintInfo}"/>
+
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
             <Button Clicked="GetStrenght" Text="Hiiii"></Button>
+            
+            <skia:SKCanvasView x:Name="canvasView"
+                          Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" />
+           
         </StackLayout>
     </ContentPage.Content>
+    
 </ContentPage>
