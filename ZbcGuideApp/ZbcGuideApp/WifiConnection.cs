@@ -14,6 +14,9 @@ namespace ZbcGuideApp
 {
     public class WifiConnection
     {
+
+        public static List<int> xvalues = new List<int>();
+        public static List<int> yvalues = new List<int>();
         public static Context context = null;
         private static WifiManager wifi;
         private WifiReceiver wifiReceiver;
@@ -44,17 +47,35 @@ namespace ZbcGuideApp
                 Debug.WriteLine(e.Message);
             }
         }
+
+        #region test
+
+        public void Test()
+        {
+            PathFinding pathFinding = new PathFinding();
+            ImportBitmap importBitmap = new ImportBitmap();
+            importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("leroy.bmp"));
+            pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
+            pathFinding.GeneratePath(40, 110, 90, 110, false);
+            pathFinding.DrawMap();
+            xvalues = pathFinding.xvalues;
+            yvalues = pathFinding.yvalues;
+        }
+        #endregion
+
+
         class WifiReceiver : BroadcastReceiver
         {
             public WifiReceiver()
             {
                 ReadingJson();
+                Debug.WriteLine("Json Called");
             }
             string printInfo  = string.Empty;
             string jsonString = string.Empty;
             IList<ScanResult> scanwifinetworks = null;
-            List<AccessPoint> accessPoints = new List<AccessPoint>();
-            List<AccesPoint>  testData = new List<AccesPoint>();
+            List<AccessPoint> accessPoints     = new List<AccessPoint>();
+            List<AccesPoint>  testData         = new List<AccesPoint>();
 
             public override void OnReceive(Context context, Intent intent)
             {
@@ -71,26 +92,20 @@ namespace ZbcGuideApp
                     accessPoints.Add(new AccessPoint() { Mac = wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level, PrintInfo = printInfo });
                     //Debug.WriteLine(printInfo);
                 }
-                TopResults(accessPoints);
+                Results(accessPoints);
                 wifi.ScanResults.Clear();
                 scanwifinetworks.Clear();
                 accessPoints.Clear();
                 
             }
-
-            /// <summary>
-            /// Shows top 3 access point based on power dBm
-            /// </summary>
-            /// <param name="scanResults"></param>
-            private void TopResults(List<AccessPoint> scanResults)
+            
+            private void Results(List<AccessPoint> scanResults)
             {
                 //List<AccessPoint> sortedList = scanResults.OrderByDescending(o => o.Strenght).ToList();
 
-
-                XyCords(scanResults[0].Strenght, scanResults[1].Strenght, scanResults[2].Strenght);
+                //XyCords(scanResults[0].Strenght, scanResults[1].Strenght, scanResults[2].Strenght);
 
                 WifiConnection.searching = false;
-              //  sortedList.Clear();
             }
 
 
@@ -102,20 +117,40 @@ namespace ZbcGuideApp
                 double exp = (27.55 - (20 * Math.Log10(freqMhz)) + Math.Abs(signaldBm)) / 20;
                 return Math.Pow(10, exp);
             }
+            
+            
 
             private void XyCords(int s1, int s2, int s3)
             {
-                double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
+                //double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
 
-                double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
+                //double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
 
-                px = px * 2.01;
-                py = py * 1.79;
+                //px = px * 2.01;
+                //py = py * 1.79;
+
+                //int x = (int)px;
+                //int y = (int)py;
+
+                //Debug.WriteLine(x);
+                //Debug.WriteLine(y);
+
+                //PathFinding pathFinding = new PathFinding();
+                //ImportBitmap importBitmap = new ImportBitmap();
+                //importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("small.bmp"));
+                //pathFinding.GenerateNewMap((int)importBitmap.BMPHeight,(int)importBitmap.BMPHeight,0,0xff,importBitmap.BMPMapArray);
+                //pathFinding.GeneratePath(11,11,3,4,false);
+                //pathFinding.DrawMap();
+                //xvalues = pathFinding.xvalues;
+                //yvalues = pathFinding.yvalues;
 
 
-                Debug.WriteLine("Out Location (calc): X:" + Math.Round(px) + " Y: " + Math.Round(py));
+
+               // Debug.WriteLine("Our Location (calc): X:" + Math.Round(px) + " Y: " + Math.Round(py));
             }
 
+
+            
 
             private void ReadingJson()
             {
