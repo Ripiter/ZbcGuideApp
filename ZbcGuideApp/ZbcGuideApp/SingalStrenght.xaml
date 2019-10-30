@@ -1,18 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              xmlns:tt="clr-namespace:TouchTracking"
              x:Class="ZbcGuideApp.SingalStrenght">
+    <ContentPage.Content>
 
-    <Grid>
-        <Label Text="Hello world x5"></Label>
-        <Label x:Name="LoadingLabel" Text="Loading"></Label>
+        <Grid>
+            <Label Text="Hello world x5"></Label>
+            <Label x:Name="LoadingLabel" Text="Loading"></Label>
+            <Image x:Name="imageForMap"> </Image>
 
+            <Button Margin="236,203,284.6,35.4"   Text="Hiiii"></Button>
+     
+            <skia:SKCanvasView x:Name="CanvasView" PaintSurface="OnCanvasViewPaintSurface"/>
+            
+        </Grid>
 
-        <Button Margin="136,403,184.6,35.4"   Text="Hiiii"></Button>
-
-    </Grid>
-
-
-
+    </ContentPage.Content>
 </ContentPage>

@@ -12,6 +12,9 @@ using Android;
 using Android.Locations;
 using System.IO;
 using System.Diagnostics;
+using Android.Graphics;
+using SkiaSharp.Views.Forms;
+using SkiaSharp;
 
 namespace ZbcGuideApp
 {
@@ -25,15 +28,56 @@ namespace ZbcGuideApp
         private double StartScale, LastScale;
         private double StartX, StartY;
         #endregion
-        
+        SKCanvas canvas;
+        SKBitmap resourceBitmap;
+
+       // SKCanvas canvas;
+
+        WifiReceiver rec = new WifiReceiver();
         WifiConnection wifi;
+
         public SingalStrenght()
         {
             InitializeComponent();
             wifi = new WifiConnection();
-            
+            rec.PathFound += DrawingOnCanvas;
+
+            using (Stream stream = Android.App.Application.Context.Assets.Open("pathing.bmp"))
+            {
+                resourceBitmap = SKBitmap.Decode(stream);
+            }
+
             GetStrenght();
-           
+        }
+
+        private void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
+        {
+            SKImageInfo info = args.Info;
+            SKSurface surface = args.Surface;
+            canvas = surface.Canvas;
+
+            canvas.Clear();
+
+            // In this example, we will draw a circle in the middle of the canvas
+
+
+            //float scale = Math.Min((float)info.Width / resourceBitmap.Width,
+            //                   info.Height / 3f / resourceBitmap.Height);
+
+            //float left = (info.Width - scale * resourceBitmap.Width) / 2;
+            //float top = (info.Height / 3 - scale * resourceBitmap.Height) / 2;
+            //float right = left + scale * resourceBitmap.Width;
+            //float bottom = top + scale * resourceBitmap.Height;
+            //SKRect rect = new SKRect(left, top, right, bottom);
+            //rect.Offset(0, 2 * info.Height / 3);
+
+            //canvas.DrawBitmap(resourceBitmap, rect);
+            
+            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 2, info.Width, 2 * info.Height / 2));
+
+
+            
+            //canvas.DrawBitmap(resourceBitmap,  new SKRect(0, info.Height / 2, info.Width, 2 * info.Height));
         }
 
         #region Methods for zoomning in and out
@@ -111,19 +155,18 @@ namespace ZbcGuideApp
         }
         #endregion
 
-
         //private async void GetStrenght(object sender, EventArgs e)
         private async void GetStrenght()
         {
             if (WifiConnection.searching == true)
             {
-                System.Diagnostics.Debug.WriteLine(WifiConnection.searching);
+                Debug.WriteLine(WifiConnection.searching);
                 return;
             }
-
+            
             LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
             if (mc.IsProviderEnabled(LocationManager.GpsProvider))
-                System.Diagnostics.Debug.WriteLine("Enabled");
+                Debug.WriteLine("Enabled");
             else
             {
                 bool x = await DisplayAlert("Need Gps", "Need Gps", "ok", "no");
@@ -137,22 +180,26 @@ namespace ZbcGuideApp
                 }
             }
 
-
-            if (WifiConnection.oc.Count != 0)
-                WifiConnection.oc.Clear();
-            System.Diagnostics.Debug.WriteLine("button clicked");
+            
+            Debug.WriteLine("button clicked");
             wifi.GetWifiNetworks();
             //wifiChecker.Start();
-            System.Diagnostics.Debug.WriteLine("Searching for wifi");
-
-            //ListOfAccessPoints.ItemsSource = WifiConnection.oc;
+            Debug.WriteLine("Searching for wifi");
 
             // path finding
-            wifi.Test();
-
-            ////List<AccessPoint> testData = new List<AccessPoint>() { new AccessPoint() { PrintInfo = "a" }, new AccessPoint() { Ssid = "0", Strenght = -1, PrintInfo = "Bye" } };
-            ////ListOfAccessPoints.ItemsSource = accessPoints;
+            //wifi.Test();
+            
         }
+
+        private void DrawingOnCanvas(object sender, EventArgs e)
+        {
+            //for (int i = 0; i < e.xValues.Count; i++)
+            //{
+            //    canvas.DrawPoint(e.xValues[i], e.yValues[i], SKColors.Red);
+            //}
+            Debug.WriteLine(WifiReceiver.hi);
+        }
+        
     }
 
 }
