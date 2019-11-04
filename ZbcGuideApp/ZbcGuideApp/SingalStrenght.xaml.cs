@@ -207,27 +207,7 @@ namespace ZbcGuideApp
             //{
             //    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
             //}
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
-            //}
-            // canvas.DrawPoint(1, 1, SKColor.Parse("#ff0000"));
-            //for (int i = 0; i < WifiConnection.xValues.Count; i++)
-            //{
-            //}
-            //if (surface == null)
-            //    Debug.WriteLine("null");
-
-            //if(canvas == null)
-            //    Debug.WriteLine("null");
-
-
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
-            //}
-            //update = true;
-
+            
             CanvasView.InvalidateSurface();
             CanvasView.PaintSurface += (sender, e) => {
                 SKSurface surface = e.Surface;
@@ -245,12 +225,6 @@ namespace ZbcGuideApp
                 canvas.Flush();
             };
         }
-
-        
-
     }
-
-    
-
 }
 
