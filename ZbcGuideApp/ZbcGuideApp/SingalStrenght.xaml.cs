@@ -28,33 +28,38 @@ namespace ZbcGuideApp
         private double StartScale, LastScale;
         private double StartX, StartY;
         #endregion
-        SKCanvas canvas;
+        
         SKBitmap resourceBitmap;
+        
+        
 
        // SKCanvas canvas;
 
-        WifiReceiver rec = new WifiReceiver();
+        //WifiReceiver rec = new WifiReceiver();
         WifiConnection wifi;
 
         public SingalStrenght()
         {
             InitializeComponent();
             wifi = new WifiConnection();
-            rec.PathFound += DrawingOnCanvas;
-
+            //rec.PathFound += DrawingOnCanvas;
+            wifi.PathFound += DrawingOnCanvas;
             using (Stream stream = Android.App.Application.Context.Assets.Open("pathing.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
             }
-
+            //Content = CanvasView;
             GetStrenght();
+
+          
+
         }
 
         private void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
         {
             SKImageInfo info = args.Info;
             SKSurface surface = args.Surface;
-            canvas = surface.Canvas;
+            SKCanvas canvas = surface.Canvas;
 
             canvas.Clear();
 
@@ -73,10 +78,10 @@ namespace ZbcGuideApp
 
             //canvas.DrawBitmap(resourceBitmap, rect);
             
-            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 2, info.Width, 2 * info.Height / 2));
+            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 3));
 
+            //DrawPoint();
 
-            
             //canvas.DrawBitmap(resourceBitmap,  new SKRect(0, info.Height / 2, info.Width, 2 * info.Height));
         }
 
@@ -188,18 +193,92 @@ namespace ZbcGuideApp
 
             // path finding
             //wifi.Test();
+
             
+
+
+            //Thread tr = new Thread(WaitingForUpdate);
+            //tr.Start();
+        }
+        bool update = false;
+        void WaitingForUpdate()
+        {
+            while (true)
+            {
+                if(update == true)
+                {
+                    CanvasView.InvalidateSurface();
+                    CanvasView.PaintSurface += (sender, e) => {
+                        var surface = e.Surface;
+                        var surfaceWidth = e.Info.Width;
+                        var surfaceHeight = e.Info.Height;
+
+                        var canvas = surface.Canvas;
+
+                        // draw on the canvas
+                        for (int i = 0; i < 1000; i++)
+                        {
+                            canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
+                        }
+
+                        canvas.Flush();
+                    };
+                    update = false;
+                }
+
+            }
         }
 
-        private void DrawingOnCanvas(object sender, EventArgs e)
+        private void DrawingOnCanvas(object senderr, EventArgs ee)
         {
-            //for (int i = 0; i < e.xValues.Count; i++)
+            //for (int i = 0; i < 100; i++)
             //{
-            //    canvas.DrawPoint(e.xValues[i], e.yValues[i], SKColors.Red);
+            //    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
             //}
-            Debug.WriteLine(WifiReceiver.hi);
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
+            //}
+            // canvas.DrawPoint(1, 1, SKColor.Parse("#ff0000"));
+            //for (int i = 0; i < WifiConnection.xValues.Count; i++)
+            //{
+            //}
+            //if (surface == null)
+            //    Debug.WriteLine("null");
+
+            //if(canvas == null)
+            //    Debug.WriteLine("null");
+
+
+            //for (int i = 0; i < 1000; i++)
+            //{
+            //    canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
+            //}
+            //update = true;
+
+            CanvasView.InvalidateSurface();
+            CanvasView.PaintSurface += (sender, e) => {
+                var surface = e.Surface;
+                var surfaceWidth = e.Info.Width;
+                var surfaceHeight = e.Info.Height;
+
+                var canvas = surface.Canvas;
+
+                // draw on the canvas
+                for (int i = 0; i < 100; i++)
+                {
+                    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
+                }
+
+                canvas.Flush();
+            };
         }
+
         
+
     }
 
+    
+
 }
+

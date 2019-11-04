@@ -10,11 +10,11 @@ using System.Text;
 
 namespace ZbcGuideApp
 {
-    public class WifiConnection
+    public class WifiConnection :  BroadcastReceiver
     {
         public static Context context = null;
         public static WifiManager wifi;
-        private WifiReceiver wifiReceiver;
+        //private WifiReceiver wifiReceiver;
         public static bool searching = false;
 
         
@@ -26,9 +26,9 @@ namespace ZbcGuideApp
             wifi = (WifiManager)context.GetSystemService(Context.WifiService);
 
             // Start a scan and register the Broadcast receiver to get the list of Wifi Networks
-            if (wifiReceiver == null)
-                wifiReceiver = new WifiReceiver();
-            context.RegisterReceiver(wifiReceiver, new IntentFilter(WifiManager.ScanResultsAvailableAction));
+            //if (wifiReceiver == null)
+            //    wifiReceiver = new WifiReceiver();
+            context.RegisterReceiver(this, new IntentFilter(WifiManager.ScanResultsAvailableAction));
             try
             {
                 Debug.WriteLine(wifi.StartScan());
@@ -61,21 +61,18 @@ namespace ZbcGuideApp
         #endregion
 
 
-    }
-
-    class WifiReceiver : BroadcastReceiver
-    {
+    
         string printInfo = string.Empty;
         string jsonString = string.Empty;
         IList<ScanResult> scanwifinetworks = null;
         List<AccessPoint> accessPoints = new List<AccessPoint>();
         List<AccesPoint> testData = new List<AccesPoint>();
 
-        public WifiReceiver()
-        {
-            ReadingJson();
-            Debug.WriteLine("Json Called");
-        }
+        //public WifiReceiver()
+        //{
+        //    ReadingJson();
+        //    Debug.WriteLine("Json Called");
+        //}
         public override void OnReceive(Context context, Intent intent)
         {
             scanwifinetworks = WifiConnection.wifi.ScanResults;
@@ -121,8 +118,7 @@ namespace ZbcGuideApp
             return Math.Pow(10, exp);
         }
 
-
-        public static string hi = "hello"; 
+        
         private void XyCords(int s1, int s2, int s3)
         {
             //double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
@@ -138,29 +134,26 @@ namespace ZbcGuideApp
             //Debug.WriteLine(x);
             //Debug.WriteLine(y);
 
-            //PathFinding pathFinding = new PathFinding();
-            //ImportBitmap importBitmap = new ImportBitmap();
-            //importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathing.bmp"));
-            //pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
-            ////pathFinding.GeneratePath(x, y, 175, 475, false);
-            //pathFinding.GeneratePath(420, 480, 175, 475, false);
-            //pathFinding.DrawMap();
+            PathFinding pathFinding = new PathFinding();
+            ImportBitmap importBitmap = new ImportBitmap();
+            importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathing.bmp"));
+            pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
+            //pathFinding.GeneratePath(x, y, 175, 475, false);
+            pathFinding.GeneratePath(420, 480, 175, 475, false);
+            pathFinding.DrawMap();
 
             //Metodenavn = returnmetode
 
-
-
-            //path.xValues = pathFinding.xValues;
-            //path.yValues = pathFinding.yValues;
-
+            xValues = pathFinding.xValues;
+            yValues = pathFinding.yValues;
 
             //Debug.WriteLine("Our Location (calc): X:" + Math.Round(px) + " Y: " + Math.Round(py));
             PathWasFound();
         }
-
+        public List<int> xValues = new List<int>();
+        public List<int> yValues = new List<int>();
         public void PathWasFound()
         {
-            hi = "hello world";
             PathFound(this, new EventArgs());
         }
 
@@ -212,12 +205,4 @@ namespace ZbcGuideApp
         public int X { get; set; }
         public int Y { get; set; }
     }
-
-    public class Path
-    {
-        //public List<int> xValues = new List<int>();
-        //public List<int> yValues = new List<int>();
-        public string Testing { get; set; }
-    }
-
 }
