@@ -15,7 +15,7 @@ namespace ZbcGuideApp
     {
         public MainPage()
         {
-            InitializeComponent();
+            InitializeComponent(); 
         }
         async private void NewPage(object sender, EventArgs e)
         {
