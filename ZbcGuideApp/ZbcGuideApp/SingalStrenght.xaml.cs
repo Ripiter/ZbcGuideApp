@@ -200,34 +200,6 @@ namespace ZbcGuideApp
             //Thread tr = new Thread(WaitingForUpdate);
             //tr.Start();
         }
-        bool update = false;
-        void WaitingForUpdate()
-        {
-            while (true)
-            {
-                if(update == true)
-                {
-                    CanvasView.InvalidateSurface();
-                    CanvasView.PaintSurface += (sender, e) => {
-                        var surface = e.Surface;
-                        var surfaceWidth = e.Info.Width;
-                        var surfaceHeight = e.Info.Height;
-
-                        var canvas = surface.Canvas;
-
-                        // draw on the canvas
-                        for (int i = 0; i < 1000; i++)
-                        {
-                            canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
-                        }
-
-                        canvas.Flush();
-                    };
-                    update = false;
-                }
-
-            }
-        }
 
         private void DrawingOnCanvas(object senderr, EventArgs ee)
         {
@@ -258,11 +230,11 @@ namespace ZbcGuideApp
 
             CanvasView.InvalidateSurface();
             CanvasView.PaintSurface += (sender, e) => {
-                var surface = e.Surface;
-                var surfaceWidth = e.Info.Width;
-                var surfaceHeight = e.Info.Height;
+                SKSurface surface = e.Surface;
+                int surfaceWidth = e.Info.Width;
+                int surfaceHeight = e.Info.Height;
 
-                var canvas = surface.Canvas;
+                SKCanvas canvas = surface.Canvas;
 
                 // draw on the canvas
                 for (int i = 0; i < 100; i++)
