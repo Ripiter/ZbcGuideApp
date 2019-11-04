@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:cameraView="clr-namespace:ZbcGuideApp.CustomViews"
+             x:Class="ZbcGuideApp.CameraPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <cameraView:CameraPreview
+                x:Name="CameraPreview"           
+                    BackgroundColor="Black"
+                    HorizontalOptions="FillAndExpand"
+                    Camera="Rear"                                         
+                    Margin="0,0,0,0"
+                    VerticalOptions="FillAndExpand"
+                    Grid.Column="0" Grid.Row="0">
+            </cameraView:CameraPreview>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
