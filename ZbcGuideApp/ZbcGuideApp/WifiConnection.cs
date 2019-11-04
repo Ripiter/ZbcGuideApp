@@ -54,6 +54,13 @@ namespace ZbcGuideApp
             //xvalues = pathFinding.xValues;
             //yvalues = pathFinding.yValues;
 
+            public override void OnReceive(Context context, Intent intent)
+            {
+                scanwifinetworks = wifi.ScanResults;
+                foreach (ScanResult wifinetwork in scanwifinetworks) 
+                {
+                    //printInfo = "Mac address " + wifinetwork.Bssid + " with name " + wifinetwork.Ssid + " with lvl dBm " + wifinetwork.Level;
+                    printInfo = wifinetwork.Ssid + " with lvl dBm " + wifinetwork.Level;
 
             Debug.WriteLine(stopwatch.Elapsed);
             stopwatch.Stop();
