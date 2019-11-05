@@ -15,6 +15,7 @@ using System.Diagnostics;
 using Android.Graphics;
 using SkiaSharp.Views.Forms;
 using SkiaSharp;
+using Android.Content.Res;
 
 namespace ZbcGuideApp
 {
@@ -44,6 +45,7 @@ namespace ZbcGuideApp
             wifi = new WifiConnection();
             //rec.PathFound += DrawingOnCanvas;
             wifi.PathFound += DrawingOnCanvas;
+            wifi.StatusChanged += StatusChanged;
             using (Stream stream = Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
@@ -158,7 +160,6 @@ namespace ZbcGuideApp
                 Debug.WriteLine(WifiConnection.searching);
                 return;
             }
-            
             LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
             if (mc.IsProviderEnabled(LocationManager.GpsProvider))
                 Debug.WriteLine("Enabled");
@@ -214,12 +215,16 @@ namespace ZbcGuideApp
                 //    canvas.DrawPoint(i, i + topOffset, SKColor.Parse("#ff0000"));
                 //}
                 //Debug.WriteLine(wifi.xValues.Count);
-                for (int i = 0; i < wifi.xValues.Count; i++)
+                for (int i = 0; i < wifi.xValues.Length; i++)
                 {
                     canvas.DrawPoint(wifi.yValues[i], wifi.xValues[i] + topOffset, SKColor.Parse("#ff0000"));
                 }
                 canvas.Flush();
             };
+        }
+        private void StatusChanged(object sender, EventArgs e)
+        {
+            LoadingLabel.Text = wifi.progress;
         }
     }
 }

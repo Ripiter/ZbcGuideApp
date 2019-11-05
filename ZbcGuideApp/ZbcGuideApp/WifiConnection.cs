@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Xamarin.Forms;
 
 namespace ZbcGuideApp
 {
@@ -39,26 +40,7 @@ namespace ZbcGuideApp
             }
         }
 
-        #region test
-
-        public void Test()
-        {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            PathFinding pathFinding = new PathFinding();
-            ImportBitmap importBitmap = new ImportBitmap();
-            importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("potato.bmp"));
-            pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
-            pathFinding.GeneratePath(90, 70, 430, 430, false);
-            pathFinding.DrawMap();
-            //xvalues = pathFinding.xValues;
-            //yvalues = pathFinding.yValues;
-
-           
-            Debug.WriteLine(stopwatch.Elapsed);
-            stopwatch.Stop();
-        }
-        #endregion
+        
 
 
     
@@ -119,9 +101,10 @@ namespace ZbcGuideApp
         }
 
         int goOne = 0;
-        ImportBitmap importBitmap = null;
+        public string progress = "";
         private void XyCords(int s1, int s2, int s3)
         {
+            
             //double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
 
             //double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
@@ -131,32 +114,19 @@ namespace ZbcGuideApp
 
             //int x = (int)px;
             //int y = (int)py;
-
             //Debug.WriteLine(x);
             //Debug.WriteLine(y);
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-            int a = 0;
-            for (int i = 0; i < 1024; i++)
-            {
-                for (int j = 0; j < 1024; j++)
-                {
-                    a += i;
-                }
-            }
-            Debug.WriteLine("end for loop time: " + stopwatch.Elapsed);
-
-
-            if (goOne == 0)
-            {
+            
+                progress = "Loading files";
+               // StatusChanged(this, new EventArgs());
                 Debug.WriteLine("started here");
-                importBitmap = new ImportBitmap();
-                importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"));
-                Debug.WriteLine("end here time: " + stopwatch.Elapsed);
-                stopwatch.Stop();
-                goOne++;
-            }
+                ImportBitmap importBitmap = new ImportBitmap();
+                //importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"));
 
+                importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"));
+            
+            progress = "Finding path";
+            //StatusChanged(this, new EventArgs());
             PathFinding pathFinding = new PathFinding();
             pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
             //pathFinding.GeneratePath(x, y, 175, 475, false);
@@ -165,20 +135,21 @@ namespace ZbcGuideApp
 
             //Metodenavn = returnmetode
 
-            xValues = pathFinding.xValues;
-            yValues = pathFinding.yValues;
+            xValues = pathFinding.XPath;
+            yValues = pathFinding.YPath;
 
             //Debug.WriteLine("Our Location (calc): X:" + Math.Round(px) + " Y: " + Math.Round(py));
             PathWasFound();
         }
-        public List<int> xValues = new List<int>();
-        public List<int> yValues = new List<int>();
+        public int[] xValues = null;
+        public int[] yValues = null;
         public void PathWasFound()
         {
             PathFound(this, new EventArgs());
         }
 
         public event EventHandler PathFound;
+        public event EventHandler StatusChanged;
 
         private void ReadingJson()
         {

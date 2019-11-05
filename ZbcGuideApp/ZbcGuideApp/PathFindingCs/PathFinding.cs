@@ -4,6 +4,18 @@ using System.Text;
 
 namespace ZbcGuideApp
 {
+    enum PATH_D
+    {
+        LEFT_UP = 1,
+        UP = 2,
+        RIGHT_UP = 3,
+        LEFT = 4,
+        RIGHT = 5,
+        LEFT_DOWN = 6,
+        DOWN = 7,
+        RIGHT_DOWN = 8,
+    };
+
     class PathFinding
     {
         // Variables
@@ -19,11 +31,18 @@ namespace ZbcGuideApp
         uint[,] mapArray;
         uint[,] mapDistanceArray;
 
-        //Coordinate memory
+        // Coordinate memory
         List<int> xMemory = new List<int>();
         List<int> yMemory = new List<int>();
         List<int> xNewMemory = new List<int>();
         List<int> yNewMemory = new List<int>();
+
+        // Path Coordinate
+        int pathCurrentlocation;
+        int lengthPath;
+        int[] xPath;
+        int[] yPath;
+        int[] directionPath;
 
         // Enums
         enum PATH : uint
@@ -41,6 +60,26 @@ namespace ZbcGuideApp
         {
             get { return mapArray; }
             set { mapArray = value; }
+        }
+        public int LengthPath
+        {
+            get { return lengthPath; }
+            set { lengthPath = value; }
+        }
+        public int[] XPath
+        {
+            get { return xPath; }
+            set { xPath = value; }
+        }
+        public int[] YPath
+        {
+            get { return yPath; }
+            set { yPath = value; }
+        }
+        public int[] DirectionPath
+        {
+            get { return directionPath; }
+            set { directionPath = value; }
         }
         #endregion
 
@@ -77,8 +116,7 @@ namespace ZbcGuideApp
                     for (int i = 0; i < valueToAvoid.Length; i++)
                         if (mapArray[x, y] == valueToAvoid[i]) mapArray[x, y] = solidValue;
         }
-        public List<int> xValues = new List<int>();
-        public List<int> yValues = new List<int>();
+
         /// <summary>
         /// Used to draw the map /// </summary>
         /// <param name="filename"></param>
@@ -88,11 +126,11 @@ namespace ZbcGuideApp
             {
                 for (int x = 0; x < mapWidth; x++)
                 {
-
-                    if (mapArray[x, y] == pathValue) {
-                        xValues.Add(x);
-                        yValues.Add(y);
-                    }
+                    if (mapArray[x, y] == solidValue) Console.Write("■");
+                    if (mapArray[x, y] == (uint)PATH.STARTPOS) Console.Write("S");
+                    if (mapArray[x, y] == (uint)PATH.ENDPOS) Console.Write("G");
+                    if (mapArray[x, y] == pathValue) Console.Write("*");
+                    if (mapArray[x, y] == 0xFFFFFF) Console.Write(" ");
                 }
                 Console.WriteLine();
             }
@@ -107,8 +145,7 @@ namespace ZbcGuideApp
         {
             if ((y < mapHeight) && (y > -1))
                 return true;
-            else
-                return false;
+            else return false;
         }
 
         // Used to check if x position is out of bounds
@@ -173,16 +210,8 @@ namespace ZbcGuideApp
             uint currentDistance = 0;
 
             // Clear old content in the lists, if any.
-            for (int i = xMemory.Count - 1; i > -1; i--)
-            {
-                xMemory.RemoveAt(i);
-                yMemory.RemoveAt(i);
-            }
-            for (int i = xNewMemory.Count - 1; i > -1; i--)
-            {
-                xNewMemory.RemoveAt(i);
-                yNewMemory.RemoveAt(i);
-            }
+            for (int i = xMemory.Count - 1; i > -1; i--) { xMemory.RemoveAt(i); yMemory.RemoveAt(i); }
+            for (int i = xNewMemory.Count - 1; i > -1; i--) { xNewMemory.RemoveAt(i); yNewMemory.RemoveAt(i); }
 
             // Debug! sets a start and end cordinate in the map array
             mapArray[yStartPos, xStartPos] = (uint)PATH.STARTPOS;
@@ -232,6 +261,13 @@ namespace ZbcGuideApp
             // Sets the pathchecker position to endposition
             xPathCheck = xEndPos;
             yPathCheck = yEndPos;
+
+            // Path Coordinate Set
+            lengthPath = (int)currentDistance;
+            pathCurrentlocation = lengthPath - 1;
+            xPath = new int[lengthPath];
+            yPath = new int[lengthPath];
+            directionPath = new int[lengthPath];
 
             // Generates the path
             while (true)
@@ -316,6 +352,23 @@ namespace ZbcGuideApp
                                 // Set a marker
                                 mapArray[y + yPathCheck, x + xPathCheck] = pathValue;
 
+                                // Stores the driection in array :)
+                                if ((y == 1) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT_UP;
+                                if ((y == 1) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT_UP;
+                                if ((y == -1) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT_DOWN;
+                                if ((y == -1) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT_DOWN;
+
+                                if ((y == 1) && (x == 0)) directionPath[pathCurrentlocation] = (int)PATH_D.UP;
+                                if ((y == -1) && (x == 0)) directionPath[pathCurrentlocation] = (int)PATH_D.DOWN;
+                                if ((y == 0) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT;
+                                if ((y == 0) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT;
+
+
+                                // Stores the location in array
+                                xPath[pathCurrentlocation] = x + xPathCheck;
+                                yPath[pathCurrentlocation] = y + yPathCheck;
+                                pathCurrentlocation -= 1;
+
                                 // Move path check
                                 xPathCheck += x;
                                 yPathCheck += y;
@@ -330,4 +383,5 @@ namespace ZbcGuideApp
         }
     }
 }
+
 
