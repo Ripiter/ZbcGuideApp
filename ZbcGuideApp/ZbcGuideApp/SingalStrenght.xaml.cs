@@ -31,7 +31,7 @@ namespace ZbcGuideApp
         
         SKBitmap resourceBitmap;
         
-        
+
 
        // SKCanvas canvas;
 
@@ -44,7 +44,7 @@ namespace ZbcGuideApp
             wifi = new WifiConnection();
             //rec.PathFound += DrawingOnCanvas;
             wifi.PathFound += DrawingOnCanvas;
-            using (Stream stream = Android.App.Application.Context.Assets.Open("pathing.bmp"))
+            using (Stream stream = Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
             }
@@ -55,6 +55,8 @@ namespace ZbcGuideApp
 
         }
 
+        private int topOffset;
+
         private void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
         {
             SKImageInfo info = args.Info;
@@ -62,26 +64,14 @@ namespace ZbcGuideApp
             SKCanvas canvas = surface.Canvas;
 
             canvas.Clear();
+            topOffset = info.Height / 5;
 
-            // In this example, we will draw a circle in the middle of the canvas
+            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 5f, info.Width, 2 * info.Height / 2.5f));
+            //canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 2));
 
 
-            //float scale = Math.Min((float)info.Width / resourceBitmap.Width,
-            //                   info.Height / 3f / resourceBitmap.Height);
-
-            //float left = (info.Width - scale * resourceBitmap.Width) / 2;
-            //float top = (info.Height / 3 - scale * resourceBitmap.Height) / 2;
-            //float right = left + scale * resourceBitmap.Width;
-            //float bottom = top + scale * resourceBitmap.Height;
-            //SKRect rect = new SKRect(left, top, right, bottom);
-            //rect.Offset(0, 2 * info.Height / 3);
-
-            //canvas.DrawBitmap(resourceBitmap, rect);
-            
-            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 3));
-
-            //DrawPoint();
-
+            //SKCanvasView canvasView = new SKCanvasView();
+            //Content = CanvasView;
             //canvas.DrawBitmap(resourceBitmap,  new SKRect(0, info.Height / 2, info.Width, 2 * info.Height));
         }
 
@@ -216,12 +206,18 @@ namespace ZbcGuideApp
 
                 SKCanvas canvas = surface.Canvas;
 
-                // draw on the canvas
-                for (int i = 0; i < 100; i++)
-                {
-                    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
-                }
 
+                // draw on the canvas
+
+                //for (int i = 0; i < 1024; i++)
+                //{
+                //    canvas.DrawPoint(i, i + topOffset, SKColor.Parse("#ff0000"));
+                //}
+                //Debug.WriteLine(wifi.xValues.Count);
+                for (int i = 0; i < wifi.xValues.Count; i++)
+                {
+                    canvas.DrawPoint(wifi.yValues[i], wifi.xValues[i] + topOffset, SKColor.Parse("#ff0000"));
+                }
                 canvas.Flush();
             };
         }

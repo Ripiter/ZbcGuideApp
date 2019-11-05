@@ -118,7 +118,8 @@ namespace ZbcGuideApp
             return Math.Pow(10, exp);
         }
 
-        
+        int goOne = 0;
+        ImportBitmap importBitmap = null;
         private void XyCords(int s1, int s2, int s3)
         {
             //double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
@@ -133,13 +134,33 @@ namespace ZbcGuideApp
 
             //Debug.WriteLine(x);
             //Debug.WriteLine(y);
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            int a = 0;
+            for (int i = 0; i < 1024; i++)
+            {
+                for (int j = 0; j < 1024; j++)
+                {
+                    a += i;
+                }
+            }
+            Debug.WriteLine("end for loop time: " + stopwatch.Elapsed);
+
+
+            if (goOne == 0)
+            {
+                Debug.WriteLine("started here");
+                importBitmap = new ImportBitmap();
+                importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"));
+                Debug.WriteLine("end here time: " + stopwatch.Elapsed);
+                stopwatch.Stop();
+                goOne++;
+            }
 
             PathFinding pathFinding = new PathFinding();
-            ImportBitmap importBitmap = new ImportBitmap();
-            importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathing.bmp"));
             pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
             //pathFinding.GeneratePath(x, y, 175, 475, false);
-            pathFinding.GeneratePath(420, 480, 175, 475, false);
+            pathFinding.GeneratePath(880, 123, 890, 900, false);
             pathFinding.DrawMap();
 
             //Metodenavn = returnmetode

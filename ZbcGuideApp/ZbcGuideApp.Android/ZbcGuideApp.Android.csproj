@@ -135,5 +135,8 @@
   <ItemGroup>
     <AndroidResource Include="Resources\layout\CameraLayout.axml" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\pathingWithLines.bmp" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

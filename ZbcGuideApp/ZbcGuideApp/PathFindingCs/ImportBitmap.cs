@@ -68,12 +68,14 @@ namespace ZbcGuideApp
         /// Used to import a 24-bitmap to a 2D array
         /// </summary>
         /// <param name="filename"></param>
+        int amountToSkip = 0;
         public void Import24Bitmap(Stream filename)
         {
             Stream inFile = filename;
 
             // Read fileformat
-            bmpFormatName = ByteToInt(inFile, 2);
+            //bmpFormatName = ByteToInt(inFile, 2);
+            amountToSkip += 2;
             if (bmpFormatName == 0x4D42) // Checks if bmp file is valid
             {
                 // Read filesize
