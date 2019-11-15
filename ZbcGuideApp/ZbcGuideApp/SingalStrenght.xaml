@@ -10,7 +10,6 @@
             <Label x:Name="LoadingLabel" Text="Loading"></Label>
             
             <Button Margin="236,203,284.6,35.4"   Text="Hiiii"></Button>
-     
             <skia:SKCanvasView x:Name="CanvasView" PaintSurface="OnCanvasViewPaintSurface"/>
             
         </Grid>

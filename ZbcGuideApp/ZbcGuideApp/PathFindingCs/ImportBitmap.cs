@@ -36,58 +36,57 @@ namespace ZbcGuideApp
         #endregion
 
         // Converts the given amount of bytes to uint
-        uint ByteToInt(Stream file, int byteAmount)
+        uint ByteToInt( int byteAmount)
         {
             for (int i = 0; i < byteAmount; i++)
-                byteArray[i] = (byte)file.ReadByte();
+                byteArray[i] = (byte)inFile.ReadByte();
             return BitConverter.ToUInt32(byteArray, 0);
         }
 
+        int none;
         // Goes forward in file by the amount given
-        void GoForward(Stream file, int amount)
+        void GoForward(int amount)
         {
-            int none;
             for (int i = 0; i < amount; i++)
-                none = file.ReadByte();
+                none = inFile.ReadByte();
         }
-
+        Stream inFile;
         /// <summary>
         /// Used to import a 24-bitmap to a 2D array
         /// </summary>
         /// <param name="filename"></param>
         public void Import24Bitmap(Stream filename)
         {
-            Stream inFile = filename;
-
+            inFile = filename;
             // Read fileformat
-            bmpFormatName = ByteToInt(inFile, 2);
+            bmpFormatName = ByteToInt(2);
 
             if (bmpFormatName == 0x4D42) // Checks if bmp file is valid
             {
                 // Skips unnecessary variables
-                GoForward(inFile, 16);
+                GoForward(16);
 
                 // Read width and height
-                bmpWidth = ByteToInt(inFile, 4);
-                bmpHeight = ByteToInt(inFile, 4);
+                bmpWidth = ByteToInt(4);
+                bmpHeight = ByteToInt(4);
 
                 // Skips unnecessary variables
-                GoForward(inFile, 2);
+                GoForward(2);
 
                 // Read bits/px
-                bmpBitsPx = ByteToInt(inFile, 2);
+                bmpBitsPx = ByteToInt(2);
 
                 // Checks if bmp file is 24 Bits
                 if (bmpBitsPx == 24)
                 {
                     // Skips unnecessary variables
-                    GoForward(inFile, 24);
+                    GoForward(24);
 
                     // Read RGB map array
                     bmpRGBMapArray = new uint[bmpWidth, bmpWidth];
                     for (int y = 0; y < bmpHeight; y++)
                         for (int x = 0; x < bmpWidth; x++)
-                            bmpRGBMapArray[x, (-y + bmpHeight - 1)] = ByteToInt(inFile, 3);
+                            bmpRGBMapArray[x, (-y + bmpHeight - 1)] = ByteToInt(3);
                 }
                 else Debug.WriteLine("Error, only suports 24-bit bmp, your format is: " + bmpBitsPx + "-bit");
             }

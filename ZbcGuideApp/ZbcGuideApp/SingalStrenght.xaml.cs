@@ -17,6 +17,7 @@ using SkiaSharp.Views.Forms;
 using SkiaSharp;
 using Android.Content.Res;
 
+
 namespace ZbcGuideApp
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
@@ -31,17 +32,32 @@ namespace ZbcGuideApp
         #endregion
         
         SKBitmap resourceBitmap;
-        
-
-
-       // SKCanvas canvas;
-
-        //WifiReceiver rec = new WifiReceiver();
         WifiConnection wifi;
 
         public SingalStrenght()
         {
             InitializeComponent();
+            #region Zoom
+            
+            PinchGestureRecognizer pinch = new PinchGestureRecognizer();
+            pinch.PinchUpdated += OnPinchUpdated;
+            CanvasView.GestureRecognizers.Add(pinch);
+
+            PanGestureRecognizer pan = new PanGestureRecognizer();
+            pan.PanUpdated += OnPanUpdated;
+            CanvasView.GestureRecognizers.Add(pan);
+
+            TapGestureRecognizer tap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+            tap.Tapped += OnTapped;
+            CanvasView.GestureRecognizers.Add(tap);
+
+
+            Scale = MIN_SCALE;
+            TranslationX = TranslationY = 0;
+            AnchorX = AnchorY = 0;
+            #endregion 
+
+
             wifi = new WifiConnection();
             //rec.PathFound += DrawingOnCanvas;
             wifi.PathFound += DrawingOnCanvas;
@@ -52,9 +68,6 @@ namespace ZbcGuideApp
             }
             //Content = CanvasView;
             GetStrenght();
-
-          
-
         }
 
         private int topOffset;
@@ -217,7 +230,7 @@ namespace ZbcGuideApp
                 //Debug.WriteLine(wifi.xValues.Count);
                 for (int i = 0; i < wifi.xValues.Length; i++)
                 {
-                    canvas.DrawPoint(wifi.yValues[i], wifi.xValues[i] + topOffset, SKColor.Parse("#ff0000"));
+                    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i] + topOffset, SKColor.Parse("#ff0000"));
                 }
                 canvas.Flush();
             };

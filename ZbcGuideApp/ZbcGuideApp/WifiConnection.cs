@@ -15,10 +15,13 @@ namespace ZbcGuideApp
     {
         public static Context context = null;
         public static WifiManager wifi;
-        //private WifiReceiver wifiReceiver;
         public static bool searching = false;
 
-        
+        string printInfo = string.Empty;
+        string jsonString = string.Empty;
+        IList<ScanResult> scanwifinetworks = null;
+        List<AccessPoint> accessPoints = new List<AccessPoint>();
+        List<AccesPoint> testData = new List<AccesPoint>();
 
         public void GetWifiNetworks()
         {
@@ -40,21 +43,6 @@ namespace ZbcGuideApp
             }
         }
 
-        
-
-
-    
-        string printInfo = string.Empty;
-        string jsonString = string.Empty;
-        IList<ScanResult> scanwifinetworks = null;
-        List<AccessPoint> accessPoints = new List<AccessPoint>();
-        List<AccesPoint> testData = new List<AccesPoint>();
-
-        //public WifiReceiver()
-        //{
-        //    ReadingJson();
-        //    Debug.WriteLine("Json Called");
-        //}
         public override void OnReceive(Context context, Intent intent)
         {
             scanwifinetworks = WifiConnection.wifi.ScanResults;
@@ -79,11 +67,6 @@ namespace ZbcGuideApp
 
         private void Results(List<AccessPoint> scanResults)
         {
-            //List<AccessPoint> sortedList = scanResults.OrderByDescending(o => o.Strenght).ToList();
-
-            // Use this code
-            //XyCords(scanResults[0].Strenght, scanResults[1].Strenght, scanResults[2].Strenght);
-            
             // testing 
             XyCords(0,0,0);
 
@@ -99,12 +82,12 @@ namespace ZbcGuideApp
             double exp = (27.55 - (20 * Math.Log10(freqMhz)) + Math.Abs(signaldBm)) / 20;
             return Math.Pow(10, exp);
         }
-
-        int goOne = 0;
+        
+        ImportBitmap importBitmap = null;
         public string progress = "";
         private void XyCords(int s1, int s2, int s3)
         {
-            
+
             //double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
 
             //double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
@@ -115,25 +98,28 @@ namespace ZbcGuideApp
             //int x = (int)px;
             //int y = (int)py;
             //Debug.WriteLine(x);
-            //Debug.WriteLine(y);
-            
-                progress = "Loading files";
-               // StatusChanged(this, new EventArgs());
-                Debug.WriteLine("started here");
-                ImportBitmap importBitmap = new ImportBitmap();
-                //importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"));
+            ////Debug.WriteLine(y);
+          
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
 
+            if (importBitmap == null)
+            {
+                progress = "Loading files";
+                StatusChanged(this, new EventArgs());
+                Debug.WriteLine("started here");
+                importBitmap = new ImportBitmap();
                 importBitmap.Import24Bitmap(Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"));
-            
+            }
+            stopwatch.Stop();
+            Debug.WriteLine(stopwatch.Elapsed);
             progress = "Finding path";
-            //StatusChanged(this, new EventArgs());
+            StatusChanged(this, new EventArgs());
             PathFinding pathFinding = new PathFinding();
-            pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPHeight, 0, 0xff, importBitmap.BMPMapArray);
+            pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPWidth, 0, 0xff, importBitmap.BMPMapArray);
             //pathFinding.GeneratePath(x, y, 175, 475, false);
             pathFinding.GeneratePath(880, 123, 890, 900, false);
-            pathFinding.DrawMap();
-
-            //Metodenavn = returnmetode
+            
 
             xValues = pathFinding.XPath;
             yValues = pathFinding.YPath;
