@@ -7,11 +7,13 @@
     <StackLayout>
         
         <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
-        <Label Text="Hello World x2"/>
-        <Label Text="Main page"/>
+        <Picker x:Name="Gender" HorizontalOptions="FillAndExpand">
+            <Picker.Items>
+                <x:String>Male</x:String>
+                <x:String>Female</x:String>
+            </Picker.Items>
+        </Picker>
+        <Image Source="MainPicture.png"/>
         <Button Clicked="Camera" Text="Camera"></Button>
 
         <Button Clicked="NewPage"></Button>
