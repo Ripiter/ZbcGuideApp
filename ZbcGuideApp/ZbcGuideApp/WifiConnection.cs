@@ -132,7 +132,7 @@ namespace ZbcGuideApp
 
 
             //progress = "Finding path";
-            //StatusChanged(this, new EventArgs());
+            //StatusChanged(this, new EventArgs()); 
             PathFinding pathFinding = new PathFinding();
             pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPWidth, 0, 0xff, importBitmap.BMPMapArray);
 
