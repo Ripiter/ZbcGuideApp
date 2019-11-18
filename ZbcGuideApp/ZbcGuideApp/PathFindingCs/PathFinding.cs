@@ -375,6 +375,7 @@ namespace ZbcGuideApp
 
                                 // Stop loop
                                 y = 2; x = 2;
+
                             }
                         }
                     }
@@ -383,5 +384,6 @@ namespace ZbcGuideApp
         }
     }
 }
+
 
 

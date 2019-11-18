@@ -115,7 +115,6 @@
     <Folder Include="Resources\drawable-xhdpi\" />
     <Folder Include="Resources\drawable-xxhdpi\" />
     <Folder Include="Resources\drawable-xxxhdpi\" />
-    <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ZbcGuideApp\ZbcGuideApp.csproj">
@@ -130,13 +129,18 @@
     <AndroidAsset Include="Assets\potato.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\pathing.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\CameraLayout.axml" />
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\pathingWithLines.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\MainPicture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\mapOfRoskilde.bmp">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidAsset>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

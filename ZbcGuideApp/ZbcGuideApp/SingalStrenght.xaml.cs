@@ -228,10 +228,13 @@ namespace ZbcGuideApp
                 //    canvas.DrawPoint(i, i + topOffset, SKColor.Parse("#ff0000"));
                 //}
                 //Debug.WriteLine(wifi.xValues.Count);
+               
+
                 for (int i = 0; i < wifi.xValues.Length; i++)
                 {
                     canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i] + topOffset, SKColor.Parse("#ff0000"));
                 }
+                    
                 canvas.Flush();
             };
         }
