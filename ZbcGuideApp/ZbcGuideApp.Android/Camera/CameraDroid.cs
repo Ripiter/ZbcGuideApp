@@ -152,7 +152,7 @@ namespace ZbcGuideApp.Droid.Camera
 
             if (_supportedJpegSizes != null && _supportedJpegSizes.Length > 0)
             {
-                _idealPhotoSize = GetOptimalSize(_supportedJpegSizes, 1050, 1400); //MAGIC NUMBER WHICH HAS PROVEN TO BE THE BEST
+                _idealPhotoSize = GetOptimalSize(_supportedJpegSizes, 950, 1200); //MAGIC NUMBER WHICH HAS PROVEN TO BE THE BEST
             }
 
             _imageReader = ImageReader.NewInstance(_idealPhotoSize.Width, _idealPhotoSize.Height, ImageFormatType.Jpeg, 1);
