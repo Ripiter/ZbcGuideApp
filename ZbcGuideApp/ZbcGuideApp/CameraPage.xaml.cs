@@ -15,6 +15,7 @@ namespace ZbcGuideApp
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CameraPage : ContentPage
     {
+        int a = 0;
         public CameraPage()
         {
             InitializeComponent();
@@ -27,15 +28,26 @@ namespace ZbcGuideApp
 
             Image ImageArrorRight = new Image
             {
-                HeightRequest = 175,
                 Source = ImageSource.FromResource("ZbcGuideApp.Img.arrowright.png")
             };
 
-            void x()
+        }
+        void x()
+        {
+            switch (WifiConnection.dValues[a])
             {
-                arrowleft.IsVisible = true;
-                arrowright.IsVisible = false;
+                case 5:
+                    arrowright.IsVisible = true;
+                    break;
+                case 4:
+                    arrowleft.IsVisible = true;
+                    break;
+                default:
+                    arrowleft.IsVisible = false;
+                    arrowright.IsVisible = false;
+                    break;
             }
         }
     }
+
 }

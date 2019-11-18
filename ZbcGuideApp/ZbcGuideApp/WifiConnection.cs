@@ -142,6 +142,7 @@ namespace ZbcGuideApp
 
             xValues = pathFinding.XPath;
             yValues = pathFinding.YPath;
+            dValues = pathFinding.DirectionPath;
 
             //Debug.WriteLine("Our Location (calc): X:" + Math.Round(px) + " Y: " + Math.Round(py));
             PathWasFound();
@@ -149,6 +150,8 @@ namespace ZbcGuideApp
         }
         public int[] xValues = null;
         public int[] yValues = null;
+        public static int[] dValues = null;
+
         public void PathWasFound()
         {
             PathFound(this, new EventArgs());
