@@ -152,7 +152,7 @@ namespace ZbcGuideApp
         public void PathWasFound()
         {
             PathFound(this, new EventArgs());
-        }
+        } 
 
         public event EventHandler PathFound;
         public event EventHandler StatusChanged;
