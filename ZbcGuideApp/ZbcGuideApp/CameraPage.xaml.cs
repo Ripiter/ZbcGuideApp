@@ -18,6 +18,24 @@ namespace ZbcGuideApp
         public CameraPage()
         {
             InitializeComponent();
+            x();
+            Image ImageArrowLeft = new Image
+            {
+                HeightRequest = 175,
+                Source = ImageSource.FromResource("ZbcGuideApp.Img.arrowleft.png")
+            };
+
+            Image ImageArrorRight = new Image
+            {
+                HeightRequest = 175,
+                Source = ImageSource.FromResource("ZbcGuideApp.Img.arrowright.png")
+            };
+
+            void x()
+            {
+                arrowleft.IsVisible = true;
+                arrowright.IsVisible = false;
+            }
         }
     }
 }

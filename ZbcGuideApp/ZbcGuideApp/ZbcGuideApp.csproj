@@ -14,11 +14,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="pathingWithLines.bmp" />
+
+    <None Remove="CustomViews\Arrow Left.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="pathingWithLines.bmp">
+    <EmbeddedResource Include="Img\arrowleft.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Img\arrowright.png">
+
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
