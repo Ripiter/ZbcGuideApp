@@ -62,7 +62,8 @@ namespace ZbcGuideApp
             //rec.PathFound += DrawingOnCanvas;
             wifi.PathFound += DrawingOnCanvas;
             wifi.StatusChanged += StatusChanged;
-            using (Stream stream = Android.App.Application.Context.Assets.Open("pathingWithLines.bmp"))
+
+            using (Stream stream = Android.App.Application.Context.Assets.Open("mapOfRoskilde.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
             }

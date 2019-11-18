@@ -103,7 +103,7 @@ namespace ZbcGuideApp
             if (importBitmap == null)
             {
                 var assembly = IntrospectionExtensions.GetTypeInfo(typeof(WifiConnection)).Assembly;
-                Stream stream = assembly.GetManifestResourceStream("ZbcGuideApp.pathingWithLines.bmp");
+                Stream stream = assembly.GetManifestResourceStream("ZbcGuideApp.mapOfRoskilde.bmp");
                 //progress = "Loading files";
                 //StatusChanged(this, new EventArgs());
                 Debug.WriteLine("started here");

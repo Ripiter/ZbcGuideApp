@@ -16,6 +16,8 @@
   <ItemGroup>
 
     <None Remove="CustomViews\Arrow Left.png" />
+
+    <None Remove="mapOfRoskilde.bmp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +26,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Img\arrowright.png">
 
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="mapOfRoskilde.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

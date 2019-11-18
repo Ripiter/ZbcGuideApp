@@ -148,7 +148,9 @@
     <EmbeddedResource Include="Resources\drawable-xhdpi\arrowright.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\mapOfRoskilde.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
