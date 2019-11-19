@@ -20,7 +20,6 @@ namespace ZbcGuideApp
 
         string printInfo = string.Empty;
         string jsonString = string.Empty;
-        IList<ScanResult> scanwifinetworks = null;
         List<AccessPoint> accessPoints = new List<AccessPoint>();
         List<AccesPoint> testData = new List<AccesPoint>();
 
@@ -46,7 +45,7 @@ namespace ZbcGuideApp
 
         public override void OnReceive(Context context, Intent intent)
         {
-            scanwifinetworks = WifiConnection.wifi.ScanResults;
+            IList<ScanResult>  scanwifinetworks = WifiConnection.wifi.ScanResults;
             foreach (ScanResult wifinetwork in scanwifinetworks)
             {
                 Debug.WriteLine(wifinetwork.Bssid + wifinetwork.Ssid);
@@ -128,6 +127,7 @@ namespace ZbcGuideApp
             catch (Exception e)
             {
                 Debug.WriteLine(e.Message);
+                wifi.StartScan();
             }
 
 
