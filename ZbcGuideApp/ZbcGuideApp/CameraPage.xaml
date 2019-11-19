@@ -17,6 +17,7 @@
             <StackLayout Orientation="Horizontal">
                 <Image Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.arrowleft.png}" x:Name="arrowleft"></Image>
                 <Image Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.arrowright.png}" x:Name="arrowright"></Image>
+                <Image Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.turnaroundarrow.jpg}" x:Name="turnaroundarrow"></Image>
             </StackLayout>
         </StackLayout>
     </ContentPage.Content>

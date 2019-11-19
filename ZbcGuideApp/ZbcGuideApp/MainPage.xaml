@@ -2,21 +2,39 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:ZbcGuideApp"
+             xmlns:cameraView="clr-namespace:ZbcGuideApp.CustomViews"
              x:Class="ZbcGuideApp.MainPage">
-
-    <StackLayout>
-        
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
         <!-- Place new controls here -->
-        <Picker x:Name="Gender" HorizontalOptions="FillAndExpand">
+        <Picker Grid.Column="2" Grid.Row="1" x:Name="School" Title="Vælg en Skole" HorizontalOptions="FillAndExpand">
             <Picker.Items>
-                <x:String>Male</x:String>
-                <x:String>Female</x:String>
+                <x:String>Roskilde</x:String>
+                <x:String>Ringsted</x:String>
+                <x:String>Næstved</x:String>
             </Picker.Items>
         </Picker>
-        <Image Source="MainPicture.png"/>
-        <Button Clicked="Camera" Text="Camera"></Button>
-
-        <Button Clicked="NewPage"></Button>
-    </StackLayout>
+        <Picker Grid.Column="2" Grid.Row="2" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand">
+            <Picker.Items>
+                <x:String>Ubuy</x:String>
+                <x:String>Food Hall</x:String>
+                <x:String>Foredragssalen</x:String>
+            </Picker.Items>
+        </Picker>
+        <Button Grid.Row="4" Grid.Column="2" Clicked="Camera"></Button>
+        <Button Grid.Row="4" Grid.Column="3" Clicked="NewPage"></Button>
+        <Image Grid.Column="3" Grid.Row="5" Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.zbc.jpg}" Margin="0,0"/>
+    </Grid>
 
 </ContentPage>

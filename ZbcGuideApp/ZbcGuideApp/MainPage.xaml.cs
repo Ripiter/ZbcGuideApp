@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using Plugin.Compass;
 
 namespace ZbcGuideApp
 {
@@ -31,6 +32,11 @@ namespace ZbcGuideApp
             if(x == true)
                 await Navigation.PushAsync(new CameraPage());
         }
+        Image Zbc = new Image
+        {
+            HeightRequest = 100,
+            Source = ImageSource.FromResource("ZbcGuideApp.Img.zbc.jpg")
+        };
 
         async Task<bool> GetCameraPermission()
         {
