@@ -3,20 +3,19 @@ using Android.Net.Wifi;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
-using Xamarin.Forms;
 
 namespace ZbcGuideApp
 {
-    public class WifiConnection :  BroadcastReceiver
+    public class WifiConnection : BroadcastReceiver
     {
         public static Context context = null;
         public static WifiManager wifi;
         public static bool searching = false;
+        private static int goingPosX = 0;
+        private static int goingPosY = 0;
 
         string printInfo = string.Empty;
         string jsonString = string.Empty;
@@ -29,9 +28,6 @@ namespace ZbcGuideApp
             // Get a handle to the Wifi
             wifi = (WifiManager)context.GetSystemService(Context.WifiService);
 
-            // Start a scan and register the Broadcast receiver to get the list of Wifi Networks
-            //if (wifiReceiver == null)
-            //    wifiReceiver = new WifiReceiver();
             context.RegisterReceiver(this, new IntentFilter(WifiManager.ScanResultsAvailableAction));
             try
             {
@@ -45,16 +41,10 @@ namespace ZbcGuideApp
 
         public override void OnReceive(Context context, Intent intent)
         {
-            IList<ScanResult>  scanwifinetworks = WifiConnection.wifi.ScanResults;
+            IList<ScanResult> scanwifinetworks = WifiConnection.wifi.ScanResults;
             foreach (ScanResult wifinetwork in scanwifinetworks)
             {
                 Debug.WriteLine(wifinetwork.Bssid + wifinetwork.Ssid);
-                //printInfo = "Mac address " + wifinetwork.Bssid + " with name " + wifinetwork.Ssid + " with lvl dBm " + wifinetwork.Level;
-                //printInfo = wifinetwork.Ssid + " with lvl dBm " + wifinetwork.Level;
-                //printInfo = "X Y cords " + SerializeJson(wifinetwork.Bssid) + " of " + wifinetwork.Bssid;
-                //printInfo = "Network " + wifinetwork.Ssid + " is " + Distance(wifinetwork.Level, wifinetwork.Frequency).ToString("n") + "m away";
-
-                //oc.Add(new AccessPoint() { Mac=wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level, PrintInfo = printInfo });
                 accessPoints.Add(new AccessPoint() { Mac = wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level, PrintInfo = printInfo });
                 //Debug.WriteLine(printInfo);
             }
@@ -64,11 +54,30 @@ namespace ZbcGuideApp
             accessPoints.Clear();
 
         }
-
+        public void SetGoPos(string name)
+        {
+            switch (name.ToLower())
+            {
+                case "ubuy":
+                    goingPosX = 175;
+                    goingPosY = 454;
+                    break;
+                case "food hall":
+                    goingPosX = 181;
+                    goingPosY = 359;
+                    break;
+                case "foredragssalen":
+                    goingPosX = 181;
+                    goingPosY = 214;
+                    break;
+                default:
+                    break;
+            }
+        }
         private void Results(List<AccessPoint> scanResults)
         {
             try
-            { 
+            {
                 ReadingJson();
                 foreach (AccessPoint item in scanResults)
                 {
@@ -79,7 +88,11 @@ namespace ZbcGuideApp
             }
             catch (Exception e)
             {
+                Debug.WriteLine(e.Message);
+                GetWifiNetworks();
 
+                if (ErrorLoading != null)
+                    ErrorLoading(this, new EventArgs());
             }
 
             WifiConnection.searching = false;
@@ -94,50 +107,32 @@ namespace ZbcGuideApp
             double exp = (27.55 - (20 * Math.Log10(freqMhz)) + Math.Abs(signaldBm)) / 20;
             return Math.Pow(10, exp);
         }
-        
-        ImportBitmap importBitmap = null;
+
         public string progress = "";
+        PathFinding pathFinding = new PathFinding();
+
+        public event EventHandler ErrorLoading;
         private void XyCords(int s1, int s2, int s3)
         {
-            if (importBitmap == null)
-            {
-                var assembly = IntrospectionExtensions.GetTypeInfo(typeof(WifiConnection)).Assembly;
-                Stream stream = assembly.GetManifestResourceStream("ZbcGuideApp.mapOfRoskilde.bmp");
-                //progress = "Loading files";
-                //StatusChanged(this, new EventArgs());
-                Debug.WriteLine("started here");
-                importBitmap = new ImportBitmap();
-                importBitmap.Import24Bitmap(stream);
-            }
-
             int x = 0;
             int y = 0;
-            try
-            {
-                double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
 
-                double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
+            double px = ((s1 * s1) - (s2 * s2) + (testData[1].X * testData[1].X)) / ((double)(2 * testData[1].X));
 
-                px = px * 2.01;
-                py = py * 1.79;
+            double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
 
-                x = (int)px;
-                y = (int)py;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-                wifi.StartScan();
-            }
+            px = px * 2.01;
+            py = py * 1.79;
 
+            x = (int)px;
+            y = (int)py;
 
             //progress = "Finding path";
             //StatusChanged(this, new EventArgs()); 
-            PathFinding pathFinding = new PathFinding();
-            pathFinding.GenerateNewMap((int)importBitmap.BMPHeight, (int)importBitmap.BMPWidth, 0, 0xff, importBitmap.BMPMapArray);
+            pathFinding.GenerateNewMap(ImportingMap.ImgHeight, ImportingMap.ImgWidth, 0, 0xff, ImportingMap.ImpArray);
 
             // Path to ubuy
-            pathFinding.GeneratePath(x, y, 175, 460, false);
+            pathFinding.GeneratePath(x, y, goingPosX, goingPosY, false);
             //pathFinding.GeneratePath(415, 478, 364, 506, false);
 
             xValues = pathFinding.XPath;
@@ -148,17 +143,16 @@ namespace ZbcGuideApp
             PathWasFound();
             testData.Clear();
         }
-        public int[] xValues = null;
-        public int[] yValues = null;
+        public static int[] xValues = null;
+        public static int[] yValues = null;
         public static int[] dValues = null;
 
         public void PathWasFound()
         {
             PathFound(this, new EventArgs());
-        } 
+        }
 
         public event EventHandler PathFound;
-        public event EventHandler StatusChanged;
 
         private void ReadingJson()
         {

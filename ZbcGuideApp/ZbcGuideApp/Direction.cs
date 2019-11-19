@@ -1,5 +1,4 @@
 ﻿using Plugin.Compass;
-using System.Diagnostics;
 using System.Collections.Generic;
 namespace ZbcGuideApp
 {
@@ -20,14 +19,17 @@ namespace ZbcGuideApp
                 {
                     SetAvgValue();
                     compassAvg.Clear();
-                    Debug.WriteLine(compassValue);
+                    //Debug.WriteLine(compassValue);
 
-                    if (WifiConnection.dValues.Length - 1 == counter)
+                    if (WifiConnection.dValues != null)
                     {
-                        counter = 0;
+                        if (WifiConnection.dValues.Length - 1 == counter)
+                        {
+                            counter = 0;
+                        }
+                        else
+                            DoSomething(WifiConnection.dValues[0]);
                     }
-                    else
-                        DoSomething(WifiConnection.dValues[0]);
                 }
 
             };

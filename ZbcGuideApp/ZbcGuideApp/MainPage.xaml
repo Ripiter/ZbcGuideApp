@@ -5,6 +5,7 @@
              xmlns:cameraView="clr-namespace:ZbcGuideApp.CustomViews"
              x:Class="ZbcGuideApp.MainPage">
 
+
     <StackLayout BackgroundColor="White">
         <StackLayout BackgroundColor="White">
             <StackLayout>

@@ -121,12 +121,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <AndroidAsset Include="Assets\leroy.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidAsset Include="Assets\potato.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\layout\CameraLayout.axml" />
   </ItemGroup>
   <ItemGroup>
