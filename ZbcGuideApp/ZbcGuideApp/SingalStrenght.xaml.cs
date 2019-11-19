@@ -63,12 +63,12 @@ namespace ZbcGuideApp
             wifi.PathFound += DrawingOnCanvas;
             wifi.StatusChanged += StatusChanged;
 
+            GetStrenght();
             using (Stream stream = Android.App.Application.Context.Assets.Open("mapOfRoskilde.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
             }
             //Content = CanvasView;
-            GetStrenght();
         }
 
         private int topOffset;
@@ -181,7 +181,7 @@ namespace ZbcGuideApp
             {
                 bool x = await DisplayAlert("Need Gps", "Need Gps", "ok", "no");
 
-                if(x == true)
+                if (x == true)
                 {
                     Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
                     intent.AddFlags(ActivityFlags.NewTask);
@@ -190,7 +190,7 @@ namespace ZbcGuideApp
                 }
             }
 
-            
+
             Debug.WriteLine("button clicked");
             wifi.GetWifiNetworks();
             //wifiChecker.Start();
@@ -233,7 +233,7 @@ namespace ZbcGuideApp
 
                 for (int i = 0; i < wifi.xValues.Length; i++)
                 {
-                    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i] + topOffset, SKColor.Parse("#ff0000"));
+                    canvas.DrawPoint(wifi.xValues[i] + 3, wifi.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
                 }
                     
                 canvas.Flush();
