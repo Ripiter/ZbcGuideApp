@@ -15,12 +15,13 @@ namespace ZbcGuideApp
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class CameraPage : ContentPage
     {
-        int a = 0;
-        Direction D = new Direction();
+        PathDirection dArrow = new PathDirection();
         public CameraPage()
         {
-            D.Changed += X;
+            dArrow.GoDirection += X;
             InitializeComponent();
+            #region
+            /*          
             Image ImageArrowLeft = new Image
             {
                 HeightRequest = 175,
@@ -38,36 +39,36 @@ namespace ZbcGuideApp
                 HeightRequest = 175,
                 Source = ImageSource.FromResource("ZbcGuideApp.Img.arrowright.png")
             };
-            
+             */
+            #endregion
         }
-
-        
 
         void X(int x)
         {
-                switch (x)
-                {
-                    case -1:
-                        arrowright.IsVisible = true;
-                        arrowleft.IsVisible = false;
-                        turnaroundarrow.IsVisible = false;
-                        break;
-                    case 0:
-                        turnaroundarrow.IsVisible = true;
-                        arrowright.IsVisible = false;
-                        arrowleft.IsVisible = false;
-                        break;
-                    case 1:
-                        arrowleft.IsVisible = true;
-                        arrowright.IsVisible = false;
-                        turnaroundarrow.IsVisible = false;
-                        break;
-                    default:
-                        arrowleft.IsVisible = false;
-                        arrowright.IsVisible = false;
-                        turnaroundarrow.IsVisible = false;
-                        break;
-                }
+            switch (x)
+            {
+            case -1:
+                arrowright.IsVisible = false;
+                arrowleft.IsVisible = true;
+                turnaroundarrow.IsVisible = false;
+                break;
+            case 0:
+                turnaroundarrow.IsVisible = true;
+                arrowright.IsVisible = false;
+                arrowleft.IsVisible = false;
+                break;
+            case 1:
+                arrowleft.IsVisible = false;
+                arrowright.IsVisible = true;
+                turnaroundarrow.IsVisible = false;
+                break;
+            default:
+                arrowleft.IsVisible = false;
+                arrowright.IsVisible = false;
+                turnaroundarrow.IsVisible = false;
+                break;
+            }
+            cpCoord.Text = (dArrow.GetDirection(0)).ToString();
         }
     }
 }

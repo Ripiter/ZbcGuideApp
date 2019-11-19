@@ -17,7 +17,6 @@ namespace ZbcGuideApp
         public MainPage()
         {
             InitializeComponent();
-
             //Image image = new Image { Source = "MainPicture.png" };
             //image.Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("MainPicture.png") : ImageSource.FromFile("Images/MainPicture.png");
         }

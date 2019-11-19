@@ -17,27 +17,10 @@
 
     <None Remove="CustomViews\Arrow Left.png" />
 
-    <None Remove="Img\turnaroundarrow.jpg" />
-
-    <None Remove="Img\zbc.jpg" />
-
     <None Remove="mapOfRoskilde.bmp" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Img\arrowleft.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Img\arrowright.png">
-
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Img\turnaroundarrow.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Img\zbc.jpg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="mapOfRoskilde.bmp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
