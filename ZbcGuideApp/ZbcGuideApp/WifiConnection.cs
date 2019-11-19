@@ -121,8 +121,8 @@ namespace ZbcGuideApp
 
             double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
 
-            px = px * 2.01;
-            py = py * 1.8;
+            px = px * 2.055;
+            py = py * 2.09;
 
             x = (int)px;
             y = (int)py;

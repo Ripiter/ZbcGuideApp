@@ -19,7 +19,7 @@
                     </Picker.Items>
                 </Picker>
 
-                <Picker Margin="16, 16" TitleColor="Gray" TextColor="Black" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand">
+                <Picker Margin="16, 16" TitleColor="Gray" TextColor="Black" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand" SelectedIndexChanged="Location_SelectedIndexChanged">
                     <Picker.Items>
                         <x:String>Ubuy</x:String>
                         <x:String>Food Hall</x:String>
