@@ -29,7 +29,7 @@ namespace ZbcGuideApp
 
             Image ImageArrowTurn = new Image
             {
-                HeightRequest = 175,
+                HeightRequest = 100,
                 Source = ImageSource.FromResource("ZbcGuideApp.Img.turnaroundarrow.jpg")
             };
 

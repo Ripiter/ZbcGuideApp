@@ -32,7 +32,7 @@ namespace ZbcGuideApp
         #endregion
         
         SKBitmap resourceBitmap;
-        WifiConnection wifi;
+        //WifiConnection wifi;
 
         public SingalStrenght()
         {
@@ -58,10 +58,9 @@ namespace ZbcGuideApp
             #endregion 
 
 
-            wifi = new WifiConnection();
+            //wifi = new WifiConnection();
             //rec.PathFound += DrawingOnCanvas;
-            wifi.PathFound += DrawingOnCanvas;
-            wifi.StatusChanged += StatusChanged;
+            //wifi.PathFound += DrawingOnCanvas;
 
             GetStrenght();
             using (Stream stream = Android.App.Application.Context.Assets.Open("mapOfRoskilde.bmp"))
@@ -85,7 +84,10 @@ namespace ZbcGuideApp
             canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 5f, info.Width, 2 * info.Height / 2.5f));
             //canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 2));
 
-
+            for (int i = 0; i < WifiConnection.xValues.Length; i++)
+            {
+                canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
+            }
             //SKCanvasView canvasView = new SKCanvasView();
             //Content = CanvasView;
             //canvas.DrawBitmap(resourceBitmap,  new SKRect(0, info.Height / 2, info.Width, 2 * info.Height));
@@ -174,25 +176,11 @@ namespace ZbcGuideApp
                 Debug.WriteLine(WifiConnection.searching);
                 return;
             }
-            LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
-            if (mc.IsProviderEnabled(LocationManager.GpsProvider))
-                Debug.WriteLine("Enabled");
-            else
-            {
-                bool x = await DisplayAlert("Need Gps", "Need Gps", "ok", "no");
-
-                if (x == true)
-                {
-                    Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
-                    intent.AddFlags(ActivityFlags.NewTask);
-                    intent.AddFlags(ActivityFlags.MultipleTask);
-                    Android.App.Application.Context.StartActivity(intent);
-                }
-            }
+           
 
 
             Debug.WriteLine("button clicked");
-            wifi.GetWifiNetworks();
+            //wifi.GetWifiNetworks();
             //wifiChecker.Start();
             Debug.WriteLine("Searching for wifi");
 
@@ -231,17 +219,13 @@ namespace ZbcGuideApp
                 //Debug.WriteLine(wifi.xValues.Count);
                
 
-                for (int i = 0; i < wifi.xValues.Length; i++)
+                for (int i = 0; i < WifiConnection.xValues.Length; i++)
                 {
-                    canvas.DrawPoint(wifi.xValues[i] + 3, wifi.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
+                    canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
                 }
                     
                 canvas.Flush();
             };
-        }
-        private void StatusChanged(object sender, EventArgs e)
-        {
-            LoadingLabel.Text = wifi.progress;
         }
     }
 }

@@ -1,37 +1,85 @@
-﻿using Android.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿using Android.Content;
+using Android.Locations;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
-using Plugin.Compass;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ZbcGuideApp
 {
     public partial class MainPage : ContentPage
     {
+        bool isSelected = false;
+        bool doneSearchin = false;
+        WifiConnection wific = new WifiConnection();
         public MainPage()
         {
             InitializeComponent();
+            AskPermision();
+            wific.ErrorLoading += ErrorOccured;
+            wific.PathFound += Wific_PathFound;
+            isSelected = false;
+            ImportingMap.StartLoading();
 
-            //Image image = new Image { Source = "MainPicture.png" };
-            //image.Source = Device.RuntimePlatform == Device.Android ? ImageSource.FromFile("MainPicture.png") : ImageSource.FromFile("Images/MainPicture.png");
+        }
+
+        private void Wific_PathFound(object sender, EventArgs e)
+        {
+            doneSearchin = true;
+            DisplayAlert("Found Path", "Found Path", "ok");
+        }
+
+        private void ErrorOccured(object sender, EventArgs e)
+        {
+            if (isSelected == true)
+                DisplayAlert("Error Occurreed", "Please try again later", "ok");
+        }
+
+        async private void AskPermision()
+        {
+            LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
+            if (mc.IsProviderEnabled(LocationManager.GpsProvider))
+                Debug.WriteLine("Enabled");
+            else
+            {
+                bool x = await DisplayAlert("Need Gps", "Need Gps", "ok", "no");
+
+                if (x == true)
+                {
+                    Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
+                    intent.AddFlags(ActivityFlags.NewTask);
+                    intent.AddFlags(ActivityFlags.MultipleTask);
+                    Android.App.Application.Context.StartActivity(intent);
+                }
+            }
         }
         async private void NewPage(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new SingalStrenght());
+            //if (isSelected == false)
+            //    return;
+
+            //if (doneSearchin == false)
+            //    return;
+
+            if (isSelected == true && doneSearchin == true)
+                await Navigation.PushAsync(new SingalStrenght());
+
             //await Navigation.PushAsync(new GpsLocationXaml());
         }
         async private void Camera(object sender, EventArgs e)
         {
-            bool x = await GetCameraPermission();
-            if(x == true)
-                await Navigation.PushAsync(new CameraPage());
+            if (isSelected == true && doneSearchin == true)
+            {
+
+                bool x = await GetCameraPermission();
+                if (x == true)
+                    await Navigation.PushAsync(new CameraPage());
+            }
+
         }
+
         Image Zbc = new Image
         {
             HeightRequest = 100,
@@ -75,6 +123,16 @@ namespace ZbcGuideApp
             }
 
             return true;
+        }
+        Picker picker;
+        private void Location_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            isSelected = true;
+            doneSearchin = false;
+            picker = (Picker)sender;
+            wific.SetGoPos(picker.SelectedItem.ToString());
+            wific.GetWifiNetworks();
+            Debug.WriteLine(picker.SelectedItem);
         }
     }
 }

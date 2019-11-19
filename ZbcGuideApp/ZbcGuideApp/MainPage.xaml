@@ -25,7 +25,7 @@
                 <x:String>Næstved</x:String>
             </Picker.Items>
         </Picker>
-        <Picker Grid.Column="2" Grid.Row="2" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand">
+        <Picker Grid.Column="2" Grid.Row="2" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand" SelectedIndexChanged="Location_SelectedIndexChanged">
             <Picker.Items>
                 <x:String>Ubuy</x:String>
                 <x:String>Food Hall</x:String>
