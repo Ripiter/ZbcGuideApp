@@ -72,7 +72,6 @@ namespace ZbcGuideApp
         {
             if (isSelected == true && doneSearchin == true)
             {
-
                 bool x = await GetCameraPermission();
                 if (x == true)
                     await Navigation.PushAsync(new CameraPage());
@@ -127,12 +126,12 @@ namespace ZbcGuideApp
         Picker picker;
         private void Location_SelectedIndexChanged(object sender, EventArgs e)
         {
-            isSelected = true;
-            doneSearchin = false;
             picker = (Picker)sender;
             wific.SetGoPos(picker.SelectedItem.ToString());
             wific.GetWifiNetworks();
             Debug.WriteLine(picker.SelectedItem);
+            isSelected = true;
+            doneSearchin = false;
         }
     }
 }
