@@ -4,37 +4,43 @@
              xmlns:local="clr-namespace:ZbcGuideApp"
              xmlns:cameraView="clr-namespace:ZbcGuideApp.CustomViews"
              x:Class="ZbcGuideApp.MainPage">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        <!-- Place new controls here -->
-        <Picker Grid.Column="2" Grid.Row="1" x:Name="School" Title="Vælg en Skole" HorizontalOptions="FillAndExpand">
-            <Picker.Items>
-                <x:String>Roskilde</x:String>
-                <x:String>Ringsted</x:String>
-                <x:String>Næstved</x:String>
-            </Picker.Items>
-        </Picker>
-        <Picker Grid.Column="2" Grid.Row="2" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand" SelectedIndexChanged="Location_SelectedIndexChanged">
-            <Picker.Items>
-                <x:String>Ubuy</x:String>
-                <x:String>Food Hall</x:String>
-                <x:String>Foredragssalen</x:String>
-            </Picker.Items>
-        </Picker>
-        <Button Grid.Row="4" Grid.Column="2" Clicked="Camera"></Button>
-        <Button Grid.Row="4" Grid.Column="3" Clicked="NewPage"></Button>
-        <Image Grid.Column="3" Grid.Row="5" Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.zbc.jpg}" Margin="0,0"/>
-    </Grid>
 
+
+    <StackLayout BackgroundColor="White">
+        <StackLayout BackgroundColor="White">
+            <StackLayout>
+                <Label Margin="32, 16" FontSize="Large" TextColor="Black"  Text="ZBC Guide App"></Label>
+                <BoxView Margin="0, 0, 0, 58" HeightRequest="1" WidthRequest="1" Color="Black"/>
+                <Picker Margin="16, 0" TitleColor="Gray" TextColor="Black" x:Name="School" Title="Vælg en Skole" HorizontalOptions="FillAndExpand">
+                    <Picker.Items>
+                        <x:String>Roskilde</x:String>
+                        <x:String>Ringsted</x:String>
+                        <x:String>Næstved</x:String>
+                    </Picker.Items>
+                </Picker>
+
+                <Picker Margin="16, 16" TitleColor="Gray" TextColor="Black" x:Name="Location" Title="Vælg lokation" HorizontalOptions="FillAndExpand">
+                    <Picker.Items>
+                        <x:String>Ubuy</x:String>
+                        <x:String>Food Hall</x:String>
+                        <x:String>Foredragssalen</x:String>
+                    </Picker.Items>
+                </Picker>
+            </StackLayout>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Margin="8, 32" Clicked="Camera" Text="Camera" Grid.Column="0"></Button>
+                <Button Margin="8, 32" Clicked="NewPage" Text="Click først" Grid.Column="1"></Button>
+            </Grid>
+        </StackLayout>
+
+        <Grid BackgroundColor="White" Padding="0, 64">
+            <Image HeightRequest="128" Source="zbc.png"/>
+        </Grid>
+    </StackLayout>
 </ContentPage>

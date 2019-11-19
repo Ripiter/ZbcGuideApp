@@ -4,7 +4,6 @@ namespace ZbcGuideApp
 {
     class Direction
     {
-
         public Direction()
         {
             Plugin.Compass.Abstractions.SensorSpeed sensorSpeed = Plugin.Compass.Abstractions.SensorSpeed.Normal;

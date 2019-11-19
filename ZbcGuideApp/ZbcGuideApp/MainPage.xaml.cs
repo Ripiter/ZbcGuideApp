@@ -17,6 +17,7 @@ namespace ZbcGuideApp
         public MainPage()
         {
             InitializeComponent();
+
             AskPermision();
             wific.ErrorLoading += ErrorOccured;
             wific.PathFound += Wific_PathFound;
@@ -54,6 +55,7 @@ namespace ZbcGuideApp
                     Android.App.Application.Context.StartActivity(intent);
                 }
             }
+
         }
         async private void NewPage(object sender, EventArgs e)
         {
