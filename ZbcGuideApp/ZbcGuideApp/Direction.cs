@@ -19,7 +19,6 @@ namespace ZbcGuideApp
                 {
                     SetAvgValue();
                     compassAvg.Clear();
-                    //Debug.WriteLine(compassValue);
 
                     if (WifiConnection.dValues != null)
                     {

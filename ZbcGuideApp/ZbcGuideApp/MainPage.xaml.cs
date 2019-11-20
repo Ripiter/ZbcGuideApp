@@ -22,13 +22,13 @@ namespace ZbcGuideApp
             wific.PathFound += Wific_PathFound;
             isSelected = false;
             ImportingMap.StartLoading();
-
         }
 
         private void Wific_PathFound(object sender, EventArgs e)
         {
             doneSearchin = true;
-            DisplayAlert("Found Path", "Found Path", "ok");
+                //DisplayAlert("Found Path", "Found Path", "ok");
+            StateLabel.Text = "State: Path Found";
 
             Location.IsEnabled = true;
         }
@@ -36,7 +36,8 @@ namespace ZbcGuideApp
         private void ErrorOccured(object sender, EventArgs e)
         {
             if (isSelected == true)
-                DisplayAlert("Error Occurreed", "Please try again later", "ok");
+                StateLabel.Text = "State: Path not found searching again";
+                //DisplayAlert("Error Occurreed", "Please try again later", "ok");
 
             Location.IsEnabled = true;
         }
@@ -132,12 +133,14 @@ namespace ZbcGuideApp
         private void Location_SelectedIndexChanged(object sender, EventArgs e)
         {
             picker = (Picker)sender;
+            StateLabel.Text = "State: Searching";
             wific.SetGoPos(picker.SelectedItem.ToString());
             wific.GetWifiNetworks();
             Debug.WriteLine(picker.SelectedItem);
             isSelected = true;
             doneSearchin = false;
             Location.IsEnabled = false;
+
         }
     }
 }

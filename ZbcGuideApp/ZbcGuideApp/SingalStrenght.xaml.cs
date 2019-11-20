@@ -175,9 +175,6 @@ namespace ZbcGuideApp
                 Debug.WriteLine(WifiConnection.searching);
                 return;
             }
-           
-
-
             Debug.WriteLine("button clicked");
             //wifi.GetWifiNetworks();
             //wifiChecker.Start();

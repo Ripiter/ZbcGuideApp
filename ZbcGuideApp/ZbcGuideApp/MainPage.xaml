@@ -33,13 +33,14 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
                 <Button Margin="8, 32" Clicked="Camera" Text="Camera" Grid.Column="0"></Button>
-                <Button Margin="8, 32" Clicked="NewPage" Text="Click først" Grid.Column="1"></Button>
+                <Button Margin="8, 32" Clicked="NewPage" Text="Map" Grid.Column="1"></Button>
             </Grid>
+                <Label x:Name="StateLabel" Text="State: " TextColor="Black"/>
+
         </StackLayout>
 
-        <Grid BackgroundColor="White" Padding="0, 64">
+        <Grid BackgroundColor="White" Padding="0, 32">
             <Image HeightRequest="128" Source="zbc.png"/>
         </Grid>
     </StackLayout>
