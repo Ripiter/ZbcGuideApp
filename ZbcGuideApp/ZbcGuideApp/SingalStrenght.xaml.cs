@@ -56,8 +56,7 @@ namespace ZbcGuideApp
             TranslationX = TranslationY = 0;
             AnchorX = AnchorY = 0;
             #endregion 
-
-
+            
             //wifi = new WifiConnection();
             //rec.PathFound += DrawingOnCanvas;
             //wifi.PathFound += DrawingOnCanvas;

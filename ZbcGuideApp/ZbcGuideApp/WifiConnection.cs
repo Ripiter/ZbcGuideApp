@@ -31,7 +31,11 @@ namespace ZbcGuideApp
             context.RegisterReceiver(this, new IntentFilter(WifiManager.ScanResultsAvailableAction));
             try
             {
-                Debug.WriteLine(wifi.StartScan());
+                if (wifi.StartScan() == false)
+                {
+                    ErrorLoading(this, new EventArgs());
+                    return;
+                }
             }
             catch (Exception e)
             {
@@ -121,7 +125,7 @@ namespace ZbcGuideApp
 
             double py = ((s1 * s1) - (s3 * s3) + (testData[2].X * testData[2].X) + (testData[2].Y * testData[2].Y)) / (2 * testData[2].Y) - (testData[2].X / (double)testData[2].Y) * px;
 
-            px = px * 2.055;
+            px = px * 2.05;
             py = py * 2.09;
 
             x = (int)px;

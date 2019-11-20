@@ -17,7 +17,6 @@ namespace ZbcGuideApp
         public MainPage()
         {
             InitializeComponent();
-
             AskPermision();
             wific.ErrorLoading += ErrorOccured;
             wific.PathFound += Wific_PathFound;
@@ -30,12 +29,16 @@ namespace ZbcGuideApp
         {
             doneSearchin = true;
             DisplayAlert("Found Path", "Found Path", "ok");
+
+            Location.IsEnabled = true;
         }
 
         private void ErrorOccured(object sender, EventArgs e)
         {
             if (isSelected == true)
                 DisplayAlert("Error Occurreed", "Please try again later", "ok");
+
+            Location.IsEnabled = true;
         }
 
         async private void AskPermision()
@@ -134,6 +137,7 @@ namespace ZbcGuideApp
             Debug.WriteLine(picker.SelectedItem);
             isSelected = true;
             doneSearchin = false;
+            Location.IsEnabled = false;
         }
     }
 }
