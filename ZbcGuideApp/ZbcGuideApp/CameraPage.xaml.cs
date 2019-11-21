@@ -18,7 +18,7 @@ namespace ZbcGuideApp
         PathDirection dArrow = new PathDirection();
         public CameraPage()
         {
-            dArrow.GoDirection += X;
+            dArrow.GoDirection += ChangeArrowImage;
             InitializeComponent();
             #region
             /*          
@@ -43,7 +43,11 @@ namespace ZbcGuideApp
             #endregion
         }
 
-        void X(int x)
+        /// <summary>
+        /// Triggers when compass got a new position
+        /// x is assigned from delegate
+        /// </summary>
+        void ChangeArrowImage(int x)
         {
             switch (x)
             {

@@ -1,48 +1,24 @@
 ﻿using Plugin.Compass;
 using System.Diagnostics;
 using System.Collections.Generic;
-
+using Plugin.Compass.Abstractions;
 namespace ZbcGuideApp
 {
     class PathDirection
     {
         public PathDirection()
         {
-            Plugin.Compass.Abstractions.SensorSpeed sensorSpeed = Plugin.Compass.Abstractions.SensorSpeed.Normal;
-            int counter = 0;
+            // set speed on how fast the compass updates
+            SensorSpeed sensorSpeed = SensorSpeed.Normal;
+
             CrossCompass.Current.CompassChanged += (s, e) =>
             {
                 compassValue = (int)e.Heading - 60;
-                //if (compassAvg.Count < 6)
-                //    compassAvg.Add(compassValue);
-                //else if (compassAvg.Count == 6)
-                //{
-                //    SetAvgValue();
-                //    compassAvg.Clear();
-                //    Debug.WriteLine(compassValue);
-
-                //    if (WifiConnection.dValues.Length - 1 == counter)
-                //        counter = 0;
-                //    else
-                //}
                 GetDirection(WifiConnection.dValues[0]);
 
             };
             CrossCompass.Current.Start(sensorSpeed);
         }
-        //List<int> compassAvg = new List<int>();
-
-        //private void SetAvgValue()
-        //{
-        //    int all = 0;
-        //    foreach (var item in compassAvg)
-        //    {
-        //        all += item;
-        //    }
-        //    all = all / compassAvg.Count;
-
-        //    compassValue = all;
-        //}
         public delegate void Dirrection_Changed(int x);
         public event Dirrection_Changed GoDirection;
 

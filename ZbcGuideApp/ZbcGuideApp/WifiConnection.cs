@@ -11,26 +11,38 @@ namespace ZbcGuideApp
 {
     public class WifiConnection : BroadcastReceiver
     {
-        public static Context context = null;
-        public static WifiManager wifi;
-        public static bool searching = false;
-        private static int goingPosX = 0;
-        private static int goingPosY = 0;
+        #region Events
+        public event EventHandler PathFound;
+        public event EventHandler ErrorLoading;
+        #endregion
 
-        string printInfo = string.Empty;
+        #region Public variables
+        public static Context context = null;
+        public static bool searching = false;
+        public static int[] xValues = null;
+        public static int[] yValues = null;
+        public static int[] dValues = null;
+        #endregion
+
+        #region Private variables
         string jsonString = string.Empty;
         List<AccessPoint> accessPoints = new List<AccessPoint>();
         List<AccesPoint> testData = new List<AccesPoint>();
+        PathFinding pathFinding = new PathFinding();
+        private static WifiManager wifi;
+        private static int goingPosX = 0;
+        private static int goingPosY = 0;
+        #endregion
 
         public void GetWifiNetworks()
         {
             searching = true;
-            // Get a handle to the Wifi
             wifi = (WifiManager)context.GetSystemService(Context.WifiService);
 
             context.RegisterReceiver(this, new IntentFilter(WifiManager.ScanResultsAvailableAction));
             try
             {
+                // If cannot start scan trow a error
                 if (wifi.StartScan() == false)
                 {
                     ErrorLoading(this, new EventArgs());
@@ -43,21 +55,30 @@ namespace ZbcGuideApp
             }
         }
 
+        /// <summary>
+        /// After wifi.StartScan() have ended this method will be run
+        /// it contains all wifi networks found in this area
+        /// including 2.4 ghz, 5 ghz and hidden networks
+        /// </summary>
         public override void OnReceive(Context context, Intent intent)
         {
-            IList<ScanResult> scanwifinetworks = WifiConnection.wifi.ScanResults;
+            IList<ScanResult> scanwifinetworks = wifi.ScanResults;
             foreach (ScanResult wifinetwork in scanwifinetworks)
             {
-                Debug.WriteLine(wifinetwork.Bssid + wifinetwork.Ssid);
-                accessPoints.Add(new AccessPoint() { Mac = wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level, PrintInfo = printInfo });
-                //Debug.WriteLine(printInfo);
+                Debug.WriteLine(wifinetwork.Bssid + " " + wifinetwork.Ssid);
+                accessPoints.Add(new AccessPoint() { Mac = wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level });
             }
             Results(accessPoints);
-            WifiConnection.wifi.ScanResults.Clear();
+            wifi.ScanResults.Clear();
             scanwifinetworks.Clear();
             accessPoints.Clear();
-
         }
+
+        /// <summary>
+        /// Sets x and y position according to
+        /// item selected in dropdown menu
+        /// </summary>
+        /// <param name="name"></param>
         public void SetGoPos(string name)
         {
             switch (name.ToLower())
@@ -78,6 +99,12 @@ namespace ZbcGuideApp
                     break;
             }
         }
+
+        /// <summary>
+        /// Reads json file and put it in a string while 
+        /// adding known mac-address to a list 
+        /// </summary>
+        /// <param name="scanResults"></param>
         private void Results(List<AccessPoint> scanResults)
         {
             try
@@ -99,7 +126,7 @@ namespace ZbcGuideApp
                     ErrorLoading(this, new EventArgs());
             }
 
-            WifiConnection.searching = false;
+            searching = false;
         }
 
 
@@ -112,10 +139,10 @@ namespace ZbcGuideApp
             return Math.Pow(10, exp);
         }
 
-        public string progress = "";
-        PathFinding pathFinding = new PathFinding();
-
-        public event EventHandler ErrorLoading;
+        /// <summary>
+        /// Gets strenght of 3 closest accesspoints and calculates your position
+        /// based on strenght and position of the known mac-addresses
+        /// </summary>
         private void XyCords(int s1, int s2, int s3)
         {
             int x = 0;
@@ -131,33 +158,40 @@ namespace ZbcGuideApp
             x = (int)px;
             y = (int)py;
 
-            //progress = "Finding path";
-            //StatusChanged(this, new EventArgs()); 
+            GeneratePath(x, y);
+        }
+
+        /// <summary>
+        /// Generates path according to the place user selected
+        /// and position that was triangulated, also
+        /// sets x, y and direction values.
+        /// <para>Triggers event that path was found</para>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        private void GeneratePath(int x, int y)
+        {
             pathFinding.GenerateNewMap(ImportingMap.ImgHeight, ImportingMap.ImgWidth, 0, 0xff, ImportingMap.ImpArray);
 
-            // Path to ubuy
             pathFinding.GeneratePath(x, y, goingPosX, goingPosY, false);
-            //pathFinding.GeneratePath(415, 478, 364, 506, false);
 
             xValues = pathFinding.XPath;
             yValues = pathFinding.YPath;
             dValues = pathFinding.DirectionPath;
 
-            //Debug.WriteLine("Our Location (calc): X:" + Math.Round(px) + " Y: " + Math.Round(py));
             PathWasFound();
             testData.Clear();
         }
-        public static int[] xValues = null;
-        public static int[] yValues = null;
-        public static int[] dValues = null;
 
         public void PathWasFound()
         {
             PathFound(this, new EventArgs());
         }
-
-        public event EventHandler PathFound;
-
+        
+        /// <summary>
+        /// Reads json file from assests folder and sets 
+        /// it in a string variable
+        /// </summary>
         private void ReadingJson()
         {
             string s = string.Empty;
@@ -170,13 +204,19 @@ namespace ZbcGuideApp
 
                 while ((len = readingStream.Read(temp, 0, temp.Length)) > 0)
                 {
-                    // Converts to string.
+                    // Converts and adds to a string.
                     s += encoding.GetString(temp, 0, len);
                 }
             }
             jsonString = s;
         }
 
+        /// <summary>
+        /// Checks if the mac address is known in the json file
+        /// if its known add's it to a list
+        /// </summary>
+        /// <param name="mac"></param>
+        /// <param name="strenght"></param>
         private void SerializeJson(string mac, int strenght)
         {
             try

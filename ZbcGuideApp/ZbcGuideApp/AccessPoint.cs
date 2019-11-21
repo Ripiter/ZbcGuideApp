@@ -8,7 +8,6 @@ namespace ZbcGuideApp
     {
       public string Ssid { get; set; }
       public int Strenght { get; set; }
-      public string PrintInfo { get; set; } 
       public string Mac { get; set; }
     }
 }

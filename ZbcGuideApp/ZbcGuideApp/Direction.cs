@@ -8,9 +8,14 @@ namespace ZbcGuideApp
         {
             Plugin.Compass.Abstractions.SensorSpeed sensorSpeed = Plugin.Compass.Abstractions.SensorSpeed.Normal;
             int counter = 0;
+
+            // Trigers when mobile is moved
+            // gives value of how many degrees mobile moved from north
             CrossCompass.Current.CompassChanged += (s, e) =>
             {
                 compassValue = (int)e.Heading;
+
+                // Get 6 values from compass and calculate avg position
                 if (compassAvg.Count < 6)
                 {
                     compassAvg.Add(compassValue);
@@ -39,14 +44,13 @@ namespace ZbcGuideApp
         private void SetAvgValue()
         {
             int all = 0;
-            foreach (var item in compassAvg)
+            foreach (int item in compassAvg)
             {
                 all += item;
             }
             all = all / compassAvg.Count;
 
             compassValue = all;
-
         }
         public delegate void Dirrection_Changed(int x);
         public event Dirrection_Changed Changed;
@@ -107,14 +111,6 @@ namespace ZbcGuideApp
 
         void GoDirection(int left, int right, int backward)
         {
-            //if (currentDirection == right)
-            //    GoDirection1 = (int)DWay.GoRight;
-            //else if (currentDirection == backward)
-            //    GoDirection1 = (int)DWay.GoBackward;
-            //else if (currentDirection == left)
-            //    GoDirection1 = (int)DWay.GoLeft;
-            //else
-            //    GoDirection1 = 999;
             if (Changed == null)
                 return;
 
@@ -147,7 +143,6 @@ namespace ZbcGuideApp
 
 
             currentDirection = DirectionValue(2, 5, 7, 4);
-
 
             switch (dValue)
             {
