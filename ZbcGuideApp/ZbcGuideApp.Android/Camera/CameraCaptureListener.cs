@@ -13,8 +13,7 @@ namespace ZbcGuideApp.Droid.Camera
             this.owner = owner ?? throw new System.ArgumentNullException("owner");
         }
 
-        public override void OnCaptureCompleted(CameraCaptureSession session, CaptureRequest request,
-            TotalCaptureResult result)
+        public override void OnCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result)
         {
             Process(result);
         }
@@ -28,22 +27,22 @@ namespace ZbcGuideApp.Droid.Camera
         {
             switch (owner.mState)
             {
-                case CameraDroid.STATE_WAITING_LOCK:
+                case CameraDroid.stateWaitingLock:
                     {
                         Integer afState = (Integer)result.Get(CaptureResult.ControlAfState);
                         if (afState == null)
                         {
-                            owner.mState = CameraDroid.STATE_PICTURE_TAKEN;
+                            owner.mState = CameraDroid.statePictureTaken;
                         }
                         else if ((((int)ControlAFState.FocusedLocked) == afState.IntValue()) ||
-                                   (((int)ControlAFState.NotFocusedLocked) == afState.IntValue()))
+                                (((int)ControlAFState.NotFocusedLocked) == afState.IntValue()))
                         {
                             // ControlAeState can be null on some devices
                             Integer aeState = (Integer)result.Get(CaptureResult.ControlAeState);
 
                             if (aeState == null || aeState.IntValue() == ((int)ControlAEState.Converged))
                             {
-                                owner.mState = CameraDroid.STATE_PICTURE_TAKEN;
+                                owner.mState = CameraDroid.statePictureTaken;
                             }
                             else
                             {
@@ -52,25 +51,25 @@ namespace ZbcGuideApp.Droid.Camera
                         }
                         break;
                     }
-                case CameraDroid.STATE_WAITING_PRECAPTURE:
+                case CameraDroid.stateWaitingPrecapture:
                     {
                         // ControlAeState can be null on some devices
                         Integer aeState = (Integer)result.Get(CaptureResult.ControlAeState);
                         if (aeState == null ||
-                                aeState.IntValue() == ((int)ControlAEState.Precapture) ||
-                                aeState.IntValue() == ((int)ControlAEState.FlashRequired))
+                            aeState.IntValue() == ((int)ControlAEState.Precapture) ||
+                            aeState.IntValue() == ((int)ControlAEState.FlashRequired))
                         {
-                            owner.mState = CameraDroid.STATE_WAITING_NON_PRECAPTURE;
+                            owner.mState = CameraDroid.stateWaitingNonPrecapture;
                         }
                         break;
                     }
-                case CameraDroid.STATE_WAITING_NON_PRECAPTURE:
+                case CameraDroid.stateWaitingNonPrecapture:
                     {
                         // ControlAeState can be null on some devices
                         Integer aeState = (Integer)result.Get(CaptureResult.ControlAeState);
                         if (aeState == null || aeState.IntValue() != ((int)ControlAEState.Precapture))
                         {
-                            owner.mState = CameraDroid.STATE_PICTURE_TAKEN;
+                            owner.mState = CameraDroid.statePictureTaken;
                         }
                         break;
                     }

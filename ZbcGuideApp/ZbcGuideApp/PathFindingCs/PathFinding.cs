@@ -162,7 +162,6 @@ namespace ZbcGuideApp
             // Sets a new chunk to be in queue on the y axis
             for (int y = -1; y < 2; y++)
             {
-
                 // Check if position is out of bounds at y axis)
                 if (PositionValidY(y + yCurrent))
                 {
@@ -210,8 +209,17 @@ namespace ZbcGuideApp
             uint currentDistance = 0;
 
             // Clear old content in the lists, if any.
-            for (int i = xMemory.Count - 1; i > -1; i--) { xMemory.RemoveAt(i); yMemory.RemoveAt(i); }
-            for (int i = xNewMemory.Count - 1; i > -1; i--) { xNewMemory.RemoveAt(i); yNewMemory.RemoveAt(i); }
+            for (int i = xMemory.Count - 1; i > -1; i--)
+            {
+                xMemory.RemoveAt(i);
+                yMemory.RemoveAt(i);
+            }
+
+            for (int i = xNewMemory.Count - 1; i > -1; i--)
+            {
+                xNewMemory.RemoveAt(i);
+                yNewMemory.RemoveAt(i);
+            }
 
             // Debug! sets a start and end cordinate in the map array
             mapArray[yStartPos, xStartPos] = (uint)PATH.STARTPOS;
@@ -225,7 +233,11 @@ namespace ZbcGuideApp
             while (mapDistanceArray[yEndPos, xEndPos] == emptyValue)
             {
                 // Checks if path is valid
-                if (xMemory.Count == 0) { Console.WriteLine("NO POSSIBLE WAY!"); return; }
+                if (xMemory.Count == 0)
+                {
+                    Console.WriteLine("NO POSSIBLE WAY!");
+                    return;
+                }
 
                 // Sets the NEW_CHUNK_IN_QUEUE to be a NEW_CHUNK to be used	
                 for (int i = xMemory.Count - 1; i > -1; i--)
@@ -362,7 +374,6 @@ namespace ZbcGuideApp
                                 if ((y == -1) && (x == 0)) directionPath[pathCurrentlocation] = (int)PATH_D.DOWN;
                                 if ((y == 0) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT;
                                 if ((y == 0) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT;
-
 
                                 // Stores the location in array
                                 xPath[pathCurrentlocation] = x + xPathCheck;

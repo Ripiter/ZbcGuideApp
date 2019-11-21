@@ -37,16 +37,15 @@ namespace ZbcGuideApp
         }
 
 
-
+        /// <summary>
+        /// Loads map, values will be used to pathfind
+        /// </summary>
         public static void StartLoading()
         {
             if (importBitmap == null)
             {
                 var assembly = IntrospectionExtensions.GetTypeInfo(typeof(WifiConnection)).Assembly;
                 Stream stream = assembly.GetManifestResourceStream("ZbcGuideApp.mapOfRoskilde.bmp");
-                //progress = "Loading files";
-                //StatusChanged(this, new EventArgs());
-                Debug.WriteLine("started here");
                 importBitmap = new ImportBitmap();
                 importBitmap.Import24Bitmap(stream);
             }

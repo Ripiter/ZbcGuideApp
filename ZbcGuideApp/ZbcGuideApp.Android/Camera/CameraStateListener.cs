@@ -8,7 +8,8 @@ namespace ZbcGuideApp.Droid.Camera
 
         public override void OnOpened(CameraDevice camera)
         {
-            if (Camera == null) return;
+            if (Camera == null)
+                return;
 
             Camera.CameraDevice = camera;
             Camera.StartPreview();
@@ -17,7 +18,8 @@ namespace ZbcGuideApp.Droid.Camera
 
         public override void OnDisconnected(CameraDevice camera)
         {
-            if (Camera == null) return;
+            if (Camera == null)
+                return;
 
             camera.Close();
             Camera.CameraDevice = null;
@@ -28,7 +30,8 @@ namespace ZbcGuideApp.Droid.Camera
         {
             camera.Close();
 
-            if (Camera == null) return;
+            if (Camera == null)
+                return;
 
             Camera.CameraDevice = null;
             Camera.OpeningCamera = false;

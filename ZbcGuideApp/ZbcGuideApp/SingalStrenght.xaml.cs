@@ -32,7 +32,7 @@ namespace ZbcGuideApp
         #endregion
         
         SKBitmap resourceBitmap;
-        //WifiConnection wifi;
+        private int topOffset;
 
         public SingalStrenght()
         {
@@ -56,21 +56,18 @@ namespace ZbcGuideApp
             TranslationX = TranslationY = 0;
             AnchorX = AnchorY = 0;
             #endregion 
-            
-            //wifi = new WifiConnection();
-            //rec.PathFound += DrawingOnCanvas;
-            //wifi.PathFound += DrawingOnCanvas;
 
             GetStrenght();
             using (Stream stream = Android.App.Application.Context.Assets.Open("mapOfRoskilde.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
             }
-            //Content = CanvasView;
         }
 
-        private int topOffset;
-
+        /// <summary>
+        /// Onload loads map of roskilde and
+        /// draws path that was calculated by Wificonnection
+        /// </summary>
         private void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
         {
             SKImageInfo info = args.Info;
@@ -81,15 +78,11 @@ namespace ZbcGuideApp
             topOffset = info.Height / 5;
 
             canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 5f, info.Width, 2 * info.Height / 2.5f));
-            //canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 2));
 
             for (int i = 0; i < WifiConnection.xValues.Length; i++)
             {
                 canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
             }
-            //SKCanvasView canvasView = new SKCanvasView();
-            //Content = CanvasView;
-            //canvas.DrawBitmap(resourceBitmap,  new SKRect(0, info.Height / 2, info.Width, 2 * info.Height));
         }
 
         #region Methods for zoomning in and out
@@ -166,37 +159,22 @@ namespace ZbcGuideApp
                 return value;
         }
         #endregion
-
-        //private async void GetStrenght(object sender, EventArgs e)
-        private async void GetStrenght()
+        
+        /// <summary>
+        /// Check if its already searching
+        /// </summary>
+        private void GetStrenght()
         {
             if (WifiConnection.searching == true)
-            {
-                Debug.WriteLine(WifiConnection.searching);
                 return;
-            }
-            Debug.WriteLine("button clicked");
-            //wifi.GetWifiNetworks();
-            //wifiChecker.Start();
-            Debug.WriteLine("Searching for wifi");
-
-            // path finding
-            //wifi.Test();
-
-            
-
-
-            //Thread tr = new Thread(WaitingForUpdate);
-            //tr.Start();
         }
 
+        /// <summary>
+        /// Draws path on canvas when event is triggers
+        /// not currently in use
+        /// </summary>
         private void DrawingOnCanvas(object senderr, EventArgs ee)
-        {
-            //for (int i = 0; i < 100; i++)
-            //{
-            //    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
-            //}
-            
+        {   
             CanvasView.InvalidateSurface();
             CanvasView.PaintSurface += (sender, e) => {
                 SKSurface surface = e.Surface;
@@ -205,21 +183,10 @@ namespace ZbcGuideApp
 
                 SKCanvas canvas = surface.Canvas;
 
-
-                // draw on the canvas
-
-                //for (int i = 0; i < 1024; i++)
-                //{
-                //    canvas.DrawPoint(i, i + topOffset, SKColor.Parse("#ff0000"));
-                //}
-                //Debug.WriteLine(wifi.xValues.Count);
-               
-
                 for (int i = 0; i < WifiConnection.xValues.Length; i++)
                 {
                     canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
                 }
-                    
                 canvas.Flush();
             };
         }

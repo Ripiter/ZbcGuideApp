@@ -15,7 +15,8 @@ namespace ZbcGuideApp.CustomViews
         }
         public object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (String.IsNullOrWhiteSpace(ResourceId)) return null;
+            if (String.IsNullOrWhiteSpace(ResourceId))
+                return null;
             return ImageSource.FromResource(ResourceId);
         }
     }

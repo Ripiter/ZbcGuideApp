@@ -17,27 +17,34 @@ namespace ZbcGuideApp
         public MainPage()
         {
             InitializeComponent();
-            AskPermision();
             wific.ErrorLoading += ErrorOccured;
             wific.PathFound += Wific_PathFound;
+            AskPermision();
             isSelected = false;
+
+            // Loads map of roskilde
+            // TODO: Add thread to do it
             ImportingMap.StartLoading();
         }
+
+
+        Image Zbc = new Image
+        {
+            HeightRequest = 100,
+            Source = ImageSource.FromResource("ZbcGuideApp.Img.zbc.jpg")
+        };
 
         private void Wific_PathFound(object sender, EventArgs e)
         {
             doneSearchin = true;
-                //DisplayAlert("Found Path", "Found Path", "ok");
-            StateLabel.Text = "State: Path Found";
-
             Location.IsEnabled = true;
+            StateLabel.Text = "State: Path Found";
         }
 
         private void ErrorOccured(object sender, EventArgs e)
         {
             if (isSelected == true)
                 StateLabel.Text = "State: Path not found searching again";
-                //DisplayAlert("Error Occurreed", "Please try again later", "ok");
 
             Location.IsEnabled = true;
         }
@@ -63,16 +70,9 @@ namespace ZbcGuideApp
         }
         async private void NewPage(object sender, EventArgs e)
         {
-            //if (isSelected == false)
-            //    return;
-
-            //if (doneSearchin == false)
-            //    return;
 
             if (isSelected == true && doneSearchin == true)
                 await Navigation.PushAsync(new SingalStrenght());
-
-            //await Navigation.PushAsync(new GpsLocationXaml());
         }
         async private void Camera(object sender, EventArgs e)
         {
@@ -82,14 +82,7 @@ namespace ZbcGuideApp
                 if (x == true)
                     await Navigation.PushAsync(new CameraPage());
             }
-
         }
-
-        Image Zbc = new Image
-        {
-            HeightRequest = 100,
-            Source = ImageSource.FromResource("ZbcGuideApp.Img.zbc.jpg")
-        };
 
         async Task<bool> GetCameraPermission()
         {
@@ -126,17 +119,19 @@ namespace ZbcGuideApp
             {
                 return false;
             }
-
             return true;
         }
-        Picker picker;
         private void Location_SelectedIndexChanged(object sender, EventArgs e)
         {
-            picker = (Picker)sender;
+            Picker picker = (Picker)sender;
             StateLabel.Text = "State: Searching";
+
+            // Sets x and y position of where we want to go
             wific.SetGoPos(picker.SelectedItem.ToString());
+
+            // Starts wifi scan and pathfinding
             wific.GetWifiNetworks();
-            Debug.WriteLine(picker.SelectedItem);
+
             isSelected = true;
             doneSearchin = false;
             Location.IsEnabled = false;
