@@ -8,23 +8,100 @@
   },
   "b4:5d:50:8f:27:21": {
     "city": "Roskilde",
-    "name": "ZBC Guest",
+    "name": "Zbc Wifi",
     "floor": "1",
     "x": "420",
     "y": "463"
   },
   "ac:a3:1e:f5:f0:c3": {
     "city": "Roskilde",
-    "name": "ZBC Guest",
+    "name": "Zbc Wifi",
     "floor": "1",
     "x": "466",
     "y": "488"
   },
   "ac:a3:1e:f5:eb:61": {
     "city": "Roskilde",
-    "name": "ZBC Guest",
+    "name": "Zbc Wifi",
     "floor": "1",
     "x": "493",
     "y": "463"
-  }
+  }, // 1
+  "b4:5d:50:8f:27:30": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "320",
+    "y": "470"
+  }, // 2
+  "ac:a3:1e:f5:a4:90": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "101",
+    "y": "455"
+  }, // 3
+  "ac:a3:1e:f5:f4:b0": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "170",
+    "y": "365"
+  }, // 4
+  "ac:a3:1e:f5:e5:20": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "224",
+    "y": "293"
+  }, // 5
+  "ac:a3:1e:f5:ec:40": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "220",
+    "y": "268"
+  }, // own
+  "36:f6:4b:af:f6:7c": {
+    "city": "Roskilde",
+    "name": "sup-rice",
+    "floor": "1",
+    "x": "205",
+    "y": "166"
+  }, // 7
+  "ac:a3:1e:f5:ea:20": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "167",
+    "y": "148"
+  }, // 8
+  "ac:a3:1e:f5:e5:80": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "47",
+    "y": "135"
+  }, // 9
+  "ac:a3:1e:f5:fa:60": {
+    "city": "Roskilde",
+    "name": "Zbc Wifi",
+    "floor": "1",
+    "x": "282",
+    "y": "126"
+  }, // nana
+  "f6:8c:50:88:07:7a": {
+    "city": "Roskilde",
+    "name": "Nana",
+    "floor": "1",
+    "x": "179",
+    "y": "186"
+  } // rasmus
+  //"00:1f:c6:60:99:59": {
+  //  "city": "Roskilde",
+  //  "name": "Rasmus",
+  //  "floor": "1",
+  //  "x": "221",
+  //  "y": "167"
+  //}
 }

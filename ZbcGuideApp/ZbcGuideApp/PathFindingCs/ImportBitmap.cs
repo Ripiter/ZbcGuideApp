@@ -121,7 +121,7 @@ namespace ZbcGuideApp
                     {
                         for (int x = 0; x < bmpWidth; x++)
                         {
-                            bmpRGBMapArray[x, (-y + bmpHeight - 1)] = ByteToInt(inFile, 3);
+                            bmpRGBMapArray[(-y + bmpHeight - 1), x] = ByteToInt(inFile, 3);
                         }
                     }
                 }

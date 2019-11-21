@@ -4,7 +4,7 @@
              xmlns:cameraView="clr-namespace:ZbcGuideApp.CustomViews"
              x:Class="ZbcGuideApp.CameraPage">
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout BackgroundColor="#333333">
             <cameraView:CameraPreview
                 x:Name="CameraPreview"           
                     BackgroundColor="Black"
@@ -14,6 +14,16 @@
                     VerticalOptions="FillAndExpand"
                     Grid.Column="0" Grid.Row="0">
             </cameraView:CameraPreview>
+            <Grid HeightRequest="100">
+                <Label Text="COORDINATE" x:Name="cpCoord" TextColor="#00FFFF"></Label>
+                <Image Source="arrowleft.png" HeightRequest="100" x:Name="arrowleft"></Image>
+                <Image Source="arrowright.png" HeightRequest="100" x:Name="arrowright"></Image>
+                <Image Source="turnaroundarrow.png" HeightRequest="100" x:Name="turnaroundarrow"></Image>
+                <!--<Image Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.arrowleft.png}" x:Name="arrowleft"></Image>
+                <Image Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.arrowright.png}" x:Name="arrowright"></Image>
+                <Image Source="{cameraView:EmbeddedImages ResourceId=ZbcGuideApp.Img.turnaroundarrow.jpg}" x:Name="turnaroundarrow"></Image>
+                -->
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,33 +1,96 @@
-﻿using Android.Runtime;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿using Android.Content;
+using Android.Locations;
 using Plugin.Permissions;
 using Plugin.Permissions.Abstractions;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace ZbcGuideApp
 {
     public partial class MainPage : ContentPage
     {
+        bool isSelected = false;
+        bool doneSearchin = false;
+        WifiConnection wific = new WifiConnection();
         public MainPage()
         {
-            InitializeComponent(); 
+            InitializeComponent();
+            AskPermision();
+            wific.ErrorLoading += ErrorOccured;
+            wific.PathFound += Wific_PathFound;
+            isSelected = false;
+            ImportingMap.StartLoading();
+        }
+
+        private void Wific_PathFound(object sender, EventArgs e)
+        {
+            doneSearchin = true;
+                //DisplayAlert("Found Path", "Found Path", "ok");
+            StateLabel.Text = "State: Path Found";
+
+            Location.IsEnabled = true;
+        }
+
+        private void ErrorOccured(object sender, EventArgs e)
+        {
+            if (isSelected == true)
+                StateLabel.Text = "State: Path not found searching again";
+                //DisplayAlert("Error Occurreed", "Please try again later", "ok");
+
+            Location.IsEnabled = true;
+        }
+
+        async private void AskPermision()
+        {
+            LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
+            if (mc.IsProviderEnabled(LocationManager.GpsProvider))
+                Debug.WriteLine("Enabled");
+            else
+            {
+                bool x = await DisplayAlert("Need Gps", "Need Gps", "ok", "no");
+
+                if (x == true)
+                {
+                    Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
+                    intent.AddFlags(ActivityFlags.NewTask);
+                    intent.AddFlags(ActivityFlags.MultipleTask);
+                    Android.App.Application.Context.StartActivity(intent);
+                }
+            }
+
+
         }
         async private void NewPage(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new SingalStrenght());
+            //if (isSelected == false)
+            //    return;
+
+            //if (doneSearchin == false)
+            //    return;
+
+            if (isSelected == true && doneSearchin == true)
+                await Navigation.PushAsync(new SingalStrenght());
+
             //await Navigation.PushAsync(new GpsLocationXaml());
         }
         async private void Camera(object sender, EventArgs e)
         {
-            bool x = await GetCameraPermission();
-            if(x == true)
-                await Navigation.PushAsync(new CameraPage());
+            if (isSelected == true && doneSearchin == true)
+            {
+                bool x = await GetCameraPermission();
+                if (x == true)
+                    await Navigation.PushAsync(new CameraPage());
+            }
+
         }
+
+        Image Zbc = new Image
+        {
+            HeightRequest = 100,
+            Source = ImageSource.FromResource("ZbcGuideApp.Img.zbc.jpg")
+        };
 
         async Task<bool> GetCameraPermission()
         {
@@ -66,6 +129,19 @@ namespace ZbcGuideApp
             }
 
             return true;
+        }
+        Picker picker;
+        private void Location_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            picker = (Picker)sender;
+            StateLabel.Text = "State: Searching";
+            wific.SetGoPos(picker.SelectedItem.ToString());
+            wific.GetWifiNetworks();
+            Debug.WriteLine(picker.SelectedItem);
+            isSelected = true;
+            doneSearchin = false;
+            Location.IsEnabled = false;
+
         }
     }
 }

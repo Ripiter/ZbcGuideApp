@@ -7,14 +7,7 @@
     <ContentPage.Content>
 
         <Grid>
-            <Label Text="Hello world x5"></Label>
-            <Label x:Name="LoadingLabel" Text="Loading"></Label>
-            <Image x:Name="imageForMap"> </Image>
-
-            <Button Margin="236,203,284.6,35.4"   Text="Hiiii"></Button>
-     
             <skia:SKCanvasView x:Name="CanvasView" PaintSurface="OnCanvasViewPaintSurface"/>
-            
         </Grid>
 
     </ContentPage.Content>

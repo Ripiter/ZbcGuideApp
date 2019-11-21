@@ -15,6 +15,8 @@ using System.Diagnostics;
 using Android.Graphics;
 using SkiaSharp.Views.Forms;
 using SkiaSharp;
+using Android.Content.Res;
+
 
 namespace ZbcGuideApp
 {
@@ -30,30 +32,44 @@ namespace ZbcGuideApp
         #endregion
         
         SKBitmap resourceBitmap;
-        
-        
-
-       // SKCanvas canvas;
-
-        //WifiReceiver rec = new WifiReceiver();
-        WifiConnection wifi;
+        //WifiConnection wifi;
 
         public SingalStrenght()
         {
             InitializeComponent();
-            wifi = new WifiConnection();
+            #region Zoom
+            
+            PinchGestureRecognizer pinch = new PinchGestureRecognizer();
+            pinch.PinchUpdated += OnPinchUpdated;
+            CanvasView.GestureRecognizers.Add(pinch);
+
+            PanGestureRecognizer pan = new PanGestureRecognizer();
+            pan.PanUpdated += OnPanUpdated;
+            CanvasView.GestureRecognizers.Add(pan);
+
+            TapGestureRecognizer tap = new TapGestureRecognizer { NumberOfTapsRequired = 2 };
+            tap.Tapped += OnTapped;
+            CanvasView.GestureRecognizers.Add(tap);
+
+
+            Scale = MIN_SCALE;
+            TranslationX = TranslationY = 0;
+            AnchorX = AnchorY = 0;
+            #endregion 
+            
+            //wifi = new WifiConnection();
             //rec.PathFound += DrawingOnCanvas;
-            wifi.PathFound += DrawingOnCanvas;
-            using (Stream stream = Android.App.Application.Context.Assets.Open("pathing.bmp"))
+            //wifi.PathFound += DrawingOnCanvas;
+
+            GetStrenght();
+            using (Stream stream = Android.App.Application.Context.Assets.Open("mapOfRoskilde.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
             }
             //Content = CanvasView;
-            GetStrenght();
-
-          
-
         }
+
+        private int topOffset;
 
         private void OnCanvasViewPaintSurface(object sender, SKPaintSurfaceEventArgs args)
         {
@@ -62,26 +78,17 @@ namespace ZbcGuideApp
             SKCanvas canvas = surface.Canvas;
 
             canvas.Clear();
+            topOffset = info.Height / 5;
 
-            // In this example, we will draw a circle in the middle of the canvas
+            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 5f, info.Width, 2 * info.Height / 2.5f));
+            //canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 2));
 
-
-            //float scale = Math.Min((float)info.Width / resourceBitmap.Width,
-            //                   info.Height / 3f / resourceBitmap.Height);
-
-            //float left = (info.Width - scale * resourceBitmap.Width) / 2;
-            //float top = (info.Height / 3 - scale * resourceBitmap.Height) / 2;
-            //float right = left + scale * resourceBitmap.Width;
-            //float bottom = top + scale * resourceBitmap.Height;
-            //SKRect rect = new SKRect(left, top, right, bottom);
-            //rect.Offset(0, 2 * info.Height / 3);
-
-            //canvas.DrawBitmap(resourceBitmap, rect);
-            
-            canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 3, info.Width, 2 * info.Height / 3));
-
-            //DrawPoint();
-
+            for (int i = 0; i < WifiConnection.xValues.Length; i++)
+            {
+                canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
+            }
+            //SKCanvasView canvasView = new SKCanvasView();
+            //Content = CanvasView;
             //canvas.DrawBitmap(resourceBitmap,  new SKRect(0, info.Height / 2, info.Width, 2 * info.Height));
         }
 
@@ -168,26 +175,8 @@ namespace ZbcGuideApp
                 Debug.WriteLine(WifiConnection.searching);
                 return;
             }
-            
-            LocationManager mc = (LocationManager)WifiConnection.context.GetSystemService(Context.LocationService);
-            if (mc.IsProviderEnabled(LocationManager.GpsProvider))
-                Debug.WriteLine("Enabled");
-            else
-            {
-                bool x = await DisplayAlert("Need Gps", "Need Gps", "ok", "no");
-
-                if(x == true)
-                {
-                    Intent intent = new Intent(Android.Provider.Settings.ActionLocationSourceSettings);
-                    intent.AddFlags(ActivityFlags.NewTask);
-                    intent.AddFlags(ActivityFlags.MultipleTask);
-                    Android.App.Application.Context.StartActivity(intent);
-                }
-            }
-
-            
             Debug.WriteLine("button clicked");
-            wifi.GetWifiNetworks();
+            //wifi.GetWifiNetworks();
             //wifiChecker.Start();
             Debug.WriteLine("Searching for wifi");
 
@@ -200,34 +189,6 @@ namespace ZbcGuideApp
             //Thread tr = new Thread(WaitingForUpdate);
             //tr.Start();
         }
-        bool update = false;
-        void WaitingForUpdate()
-        {
-            while (true)
-            {
-                if(update == true)
-                {
-                    CanvasView.InvalidateSurface();
-                    CanvasView.PaintSurface += (sender, e) => {
-                        var surface = e.Surface;
-                        var surfaceWidth = e.Info.Width;
-                        var surfaceHeight = e.Info.Height;
-
-                        var canvas = surface.Canvas;
-
-                        // draw on the canvas
-                        for (int i = 0; i < 1000; i++)
-                        {
-                            canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
-                        }
-
-                        canvas.Flush();
-                    };
-                    update = false;
-                }
-
-            }
-        }
 
         private void DrawingOnCanvas(object senderr, EventArgs ee)
         {
@@ -235,50 +196,33 @@ namespace ZbcGuideApp
             //{
             //    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
             //}
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
-            //}
-            // canvas.DrawPoint(1, 1, SKColor.Parse("#ff0000"));
-            //for (int i = 0; i < WifiConnection.xValues.Count; i++)
-            //{
-            //}
-            //if (surface == null)
-            //    Debug.WriteLine("null");
-
-            //if(canvas == null)
-            //    Debug.WriteLine("null");
-
-
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    canvas.DrawPoint(i, i, SKColor.Parse("#ff0000"));
-            //}
-            //update = true;
-
+            
             CanvasView.InvalidateSurface();
             CanvasView.PaintSurface += (sender, e) => {
-                var surface = e.Surface;
-                var surfaceWidth = e.Info.Width;
-                var surfaceHeight = e.Info.Height;
+                SKSurface surface = e.Surface;
+                int surfaceWidth = e.Info.Width;
+                int surfaceHeight = e.Info.Height;
 
-                var canvas = surface.Canvas;
+                SKCanvas canvas = surface.Canvas;
+
 
                 // draw on the canvas
-                for (int i = 0; i < 100; i++)
-                {
-                    canvas.DrawPoint(wifi.xValues[i], wifi.yValues[i], SKColor.Parse("#ff0000"));
-                }
 
+                //for (int i = 0; i < 1024; i++)
+                //{
+                //    canvas.DrawPoint(i, i + topOffset, SKColor.Parse("#ff0000"));
+                //}
+                //Debug.WriteLine(wifi.xValues.Count);
+               
+
+                for (int i = 0; i < WifiConnection.xValues.Length; i++)
+                {
+                    canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
+                }
+                    
                 canvas.Flush();
             };
         }
-
-        
-
     }
-
-    
-
 }
 
