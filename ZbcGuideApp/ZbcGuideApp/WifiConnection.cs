@@ -26,8 +26,8 @@ namespace ZbcGuideApp
 
         #region Private variables
         string jsonString = string.Empty;
-        List<AccessPoint> accessPoints = new List<AccessPoint>();
-        List<AccesPoint> testData = new List<AccesPoint>();
+        List<UnKnownAccessPoint> accessPoints = new List<UnKnownAccessPoint>();
+        List<KnownAccessPoint> testData = new List<KnownAccessPoint>();
         PathFinding pathFinding = new PathFinding();
         private static WifiManager wifi;
         private static int goingPosX = 0;
@@ -66,7 +66,7 @@ namespace ZbcGuideApp
             foreach (ScanResult wifinetwork in scanwifinetworks)
             {
                 Debug.WriteLine(wifinetwork.Bssid + " " + wifinetwork.Ssid);
-                accessPoints.Add(new AccessPoint() { Mac = wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level });
+                accessPoints.Add(new UnKnownAccessPoint { Mac = wifinetwork.Bssid, Ssid = wifinetwork.Ssid, Strenght = wifinetwork.Level });
             }
             Results(accessPoints);
             wifi.ScanResults.Clear();
@@ -105,12 +105,12 @@ namespace ZbcGuideApp
         /// adding known mac-address to a list 
         /// </summary>
         /// <param name="scanResults"></param>
-        private void Results(List<AccessPoint> scanResults)
+        private void Results(List<UnKnownAccessPoint> scanResults)
         {
             try
             {
                 ReadingJson();
-                foreach (AccessPoint item in scanResults)
+                foreach (UnKnownAccessPoint item in scanResults)
                 {
                     SerializeJson(item.Mac, item.Strenght);
                 }
@@ -227,7 +227,7 @@ namespace ZbcGuideApp
                 int x = (int)jToken["x"];
                 int y = (int)jToken["y"];
                 Debug.WriteLine($"x {x} y {y} of {mac}");
-                testData.Add(new AccesPoint { X = x, Y = y, Strenght = strenght });
+                testData.Add(new KnownAccessPoint { X = x, Y = y, Strenght = strenght });
             }
             catch
             {
@@ -237,10 +237,5 @@ namespace ZbcGuideApp
 
     }
 
-    class AccesPoint
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int Strenght { get; set; }
-    }
+
 }

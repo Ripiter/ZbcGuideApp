@@ -71,7 +71,6 @@ namespace ZbcGuideApp
         }
         async private void NewPage(object sender, EventArgs e)
         {
-
             if (isSelected == true && doneSearchin == true)
                 await Navigation.PushAsync(new SingalStrenght());
         }
