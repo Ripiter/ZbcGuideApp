@@ -34,7 +34,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Button Margin="8, 32" Clicked="Camera" Text="Camera" Grid.Column="0"></Button>
-                <Button Margin="8, 32" Clicked="NewPage" Text="Map" Grid.Column="1"></Button>
+                <Button Margin="8, 32" Clicked="MapPage" Text="Map" Grid.Column="1"></Button>
             </Grid>
                 <Label x:Name="StateLabel" Text="State: " TextColor="Black"/>
 

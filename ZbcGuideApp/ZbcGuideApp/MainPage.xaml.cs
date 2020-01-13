@@ -12,13 +12,13 @@ namespace ZbcGuideApp
     public partial class MainPage : ContentPage
     {
         bool isSelected = false;
-        bool doneSearchin = false;
-        WifiConnection wific = new WifiConnection();
+        bool mapLoaded = false;
+        WifiConnection wific;
         public MainPage()
         {
             InitializeComponent();
-            wific.ErrorLoading += ErrorOccured;
-            wific.PathFound += Wific_PathFound;
+            wific = new WifiConnection();
+            wific.PathFound += PathFound;
             AskPermision();
             isSelected = false;
 
@@ -34,19 +34,11 @@ namespace ZbcGuideApp
             Source = ImageSource.FromResource("ZbcGuideApp.Img.zbc.jpg")
         };
 
-        private void Wific_PathFound(object sender, EventArgs e)
+        private void PathFound(object sender, EventArgs e)
         {
-            doneSearchin = true;
-            Location.IsEnabled = true;
+            //Location.IsEnabled = true;
+            mapLoaded = true;
             StateLabel.Text = "State: Path Found";
-        }
-
-        private void ErrorOccured(object sender, EventArgs e)
-        {
-            if (isSelected == true)
-                StateLabel.Text = "State: Path not found searching again";
-
-            Location.IsEnabled = true;
         }
 
         async private void AskPermision()
@@ -69,19 +61,19 @@ namespace ZbcGuideApp
 
 
         }
-        async private void NewPage(object sender, EventArgs e)
+        async private void MapPage(object sender, EventArgs e)
         {
-            if (isSelected == true && doneSearchin == true)
+            if (isSelected == true && mapLoaded == true && OurPosition.scanned == true)
+            {
+                wific.GeneratePath();
                 await Navigation.PushAsync(new SingalStrenght());
+            }
         }
         async private void Camera(object sender, EventArgs e)
         {
-            if (isSelected == true && doneSearchin == true)
-            {
-                bool x = await GetCameraPermission();
-                if (x == true)
-                    await Navigation.PushAsync(new CameraPage());
-            }
+            bool x = await GetCameraPermission();
+            if (x == true)
+                await Navigation.PushAsync(new QrCodeMain());
         }
 
         async Task<bool> GetCameraPermission()
@@ -128,13 +120,10 @@ namespace ZbcGuideApp
 
             // Sets x and y position of where we want to go
             wific.SetGoPos(picker.SelectedItem.ToString());
-
-            // Starts wifi scan and pathfinding
-            wific.GetWifiNetworks();
-
+            mapLoaded = false;
+            wific.GenerateMap();
             isSelected = true;
-            doneSearchin = false;
-            Location.IsEnabled = false;
+            //Location.IsEnabled = false;
 
         }
     }

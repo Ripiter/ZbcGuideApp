@@ -6,38 +6,38 @@ namespace ZbcGuideApp
     {
         public Direction()
         {
-            Plugin.Compass.Abstractions.SensorSpeed sensorSpeed = Plugin.Compass.Abstractions.SensorSpeed.Normal;
-            int counter = 0;
+            //Plugin.Compass.Abstractions.SensorSpeed sensorSpeed = Plugin.Compass.Abstractions.SensorSpeed.Normal;
+            //int counter = 0;
 
-            // Trigers when mobile is moved
-            // gives value of how many degrees mobile moved from north
-            CrossCompass.Current.CompassChanged += (s, e) =>
-            {
-                compassValue = (int)e.Heading;
+            //// Trigers when mobile is moved
+            //// gives value of how many degrees mobile moved from north
+            //CrossCompass.Current.CompassChanged += (s, e) =>
+            //{
+            //    compassValue = (int)e.Heading;
 
-                // Get 6 values from compass and calculate avg position
-                if (compassAvg.Count < 6)
-                {
-                    compassAvg.Add(compassValue);
-                }
-                else if (compassAvg.Count == 6)
-                {
-                    SetAvgValue();
-                    compassAvg.Clear();
+            //    // Get 6 values from compass and calculate avg position
+            //    if (compassAvg.Count < 6)
+            //    {
+            //        compassAvg.Add(compassValue);
+            //    }
+            //    else if (compassAvg.Count == 6)
+            //    {
+            //        SetAvgValue();
+            //        compassAvg.Clear();
 
-                    if (WifiConnection.dValues != null)
-                    {
-                        if (WifiConnection.dValues.Length - 1 == counter)
-                        {
-                            counter = 0;
-                        }
-                        else
-                            DoSomething(WifiConnection.dValues[0]);
-                    }
-                }
+            //        if (WifiConnection.dValues != null)
+            //        {
+            //            if (WifiConnection.dValues.Length - 1 == counter)
+            //            {
+            //                counter = 0;
+            //            }
+            //            else
+            //                DoSomething(WifiConnection.dValues[0]);
+            //        }
+            //    }
 
-            };
-            CrossCompass.Current.Start(sensorSpeed);
+            //};
+            //CrossCompass.Current.Start(sensorSpeed);
         }
         List<int> compassAvg = new List<int>();
 

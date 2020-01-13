@@ -18,7 +18,7 @@ namespace ZbcGuideApp
         PathDirection dArrow = new PathDirection();
         public CameraPage()
         {
-            dArrow.GoDirection += ChangeArrowImage;
+            //dArrow.GoDirection += ChangeArrowImage;
             InitializeComponent();
             #region
             /*          
@@ -49,30 +49,30 @@ namespace ZbcGuideApp
         /// </summary>
         void ChangeArrowImage(int x)
         {
-            switch (x)
-            {
-            case -1:
-                arrowright.IsVisible = false;
-                arrowleft.IsVisible = true;
-                turnaroundarrow.IsVisible = false;
-                break;
-            case 0:
-                turnaroundarrow.IsVisible = true;
-                arrowright.IsVisible = false;
-                arrowleft.IsVisible = false;
-                break;
-            case 1:
-                arrowleft.IsVisible = false;
-                arrowright.IsVisible = true;
-                turnaroundarrow.IsVisible = false;
-                break;
-            default:
-                arrowleft.IsVisible = false;
-                arrowright.IsVisible = false;
-                turnaroundarrow.IsVisible = false;
-                break;
-            }
-            cpCoord.Text = (dArrow.GetDirection(0)).ToString();
+            //switch (x)
+            //{
+            //case -1:
+            //    arrowright.IsVisible = false;
+            //    arrowleft.IsVisible = true;
+            //    turnaroundarrow.IsVisible = false;
+            //    break;
+            //case 0:
+            //    turnaroundarrow.IsVisible = true;
+            //    arrowright.IsVisible = false;
+            //    arrowleft.IsVisible = false;
+            //    break;
+            //case 1:
+            //    arrowleft.IsVisible = false;
+            //    arrowright.IsVisible = true;
+            //    turnaroundarrow.IsVisible = false;
+            //    break;
+            //default:
+            //    arrowleft.IsVisible = false;
+            //    arrowright.IsVisible = false;
+            //    turnaroundarrow.IsVisible = false;
+            //    break;
+            //}
+            //cpCoord.Text = (dArrow.GetDirection(0)).ToString();
         }
     }
 }

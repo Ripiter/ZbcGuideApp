@@ -56,8 +56,7 @@ namespace ZbcGuideApp
             TranslationX = TranslationY = 0;
             AnchorX = AnchorY = 0;
             #endregion 
-
-            GetStrenght();
+            
             using (Stream stream = Android.App.Application.Context.Assets.Open("mapOfRoskilde.bmp"))
             {
                 resourceBitmap = SKBitmap.Decode(stream);
@@ -79,7 +78,7 @@ namespace ZbcGuideApp
 
             canvas.DrawBitmap(resourceBitmap, new SKRect(0, info.Height / 5f, info.Width, 2 * info.Height / 2.5f));
 
-            for (int i = 0; i < WifiConnection.xValues.Length; i++)
+            for (int i = 0; i < WifiConnection.xValues.Count; i++)
             {
                 canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
             }
@@ -160,14 +159,7 @@ namespace ZbcGuideApp
         }
         #endregion
         
-        /// <summary>
-        /// Check if its already searching
-        /// </summary>
-        private void GetStrenght()
-        {
-            if (WifiConnection.searching == true)
-                return;
-        }
+       
 
         /// <summary>
         /// Draws path on canvas when event is triggers
@@ -183,7 +175,7 @@ namespace ZbcGuideApp
 
                 SKCanvas canvas = surface.Canvas;
 
-                for (int i = 0; i < WifiConnection.xValues.Length; i++)
+                for (int i = 0; i < WifiConnection.xValues.Count; i++)
                 {
                     canvas.DrawPoint(WifiConnection.xValues[i] + 3, WifiConnection.yValues[i] + topOffset + 20, SKColor.Parse("#ff0000"));
                 }

@@ -1,397 +1,335 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿using System.Collections.Generic;
+using System.IO;
 namespace ZbcGuideApp
 {
-    enum PATH_D
-    {
-        LEFT_UP = 1,
-        UP = 2,
-        RIGHT_UP = 3,
-        LEFT = 4,
-        RIGHT = 5,
-        LEFT_DOWN = 6,
-        DOWN = 7,
-        RIGHT_DOWN = 8,
-    };
 
+    enum PathImage
+    {
+        ColorImage = 0,
+        WaveImage = 1,
+    };
+    enum PathDirection
+    {
+        Up = 1,
+        TopRightCorner = 2,
+        Right = 3,
+        LowerRightCorner = 4,
+        Down = 5,
+        LowerLeftCorner = 6,
+        Left = 7,
+        TopLeftCorner = 8,
+    };
     class PathFinding
     {
-        // Variables
-        int xStartPos, yStartPos;
-        int xEndPos, yEndPos;
-        int xPathCheck, yPathCheck;
-        int mapWidth, mapHeight;
-        uint solidValue;
-        uint pathValue;
-        const uint emptyValue = 0;
+        // Path map
+        private uint mWidth, mHeight;
+        private uint[,] mColorArray, mDistanceArray;
+        private BMP24Bit mBitmap;
 
-        // Arrays
-        uint[,] mapArray;
-        uint[,] mapDistanceArray;
+        // Path calucation
+        private uint pCurrentDistance;
+        private bool pStrafe;
 
-        // Coordinate memory
-        List<int> xMemory = new List<int>();
-        List<int> yMemory = new List<int>();
-        List<int> xNewMemory = new List<int>();
-        List<int> yNewMemory = new List<int>();
+        // Path coordinate memory
+        private List<uint> xMemory = new List<uint>();
+        private List<uint> yMemory = new List<uint>();
+        private List<uint> xNewMemory = new List<uint>();
+        private List<uint> yNewMemory = new List<uint>();
 
-        // Path Coordinate
-        int pathCurrentlocation;
-        int lengthPath;
-        int[] xPath;
-        int[] yPath;
-        int[] directionPath;
+        // Path distance definitions
+        private const uint SOLID = 0xFFFFFFFF;
+        private const uint ENDPOS = 0xFFFFFFFD;
+        private const uint NEW_CHUNK = 0xFFFFFFFC;
+        private const uint CHUNK_IN_QUEUE = 0xFFFFFFFB;
+        private const uint UNSET = 0x00000000;
 
-        // Enums
-        enum PATH : uint
-        {
-            SOLID = 65536,
-            STARTPOS = 65535,
-            ENDPOS = 65534,
-            NEW_CHUNK = 65533,
-            CHUNK_IN_QUEUE = 64432
-        };
+        // Path list definitions
+        private const uint LIST_XCOORD = 0;
+        private const uint LIST_YCOORD = 1;
+        private const uint LIST_DIRECTION = 2;
 
-        // Property
-        #region property
-        public uint[,] MapArray
-        {
-            get { return mapArray; }
-            set { mapArray = value; }
-        }
-        public int LengthPath
-        {
-            get { return lengthPath; }
-            set { lengthPath = value; }
-        }
-        public int[] XPath
-        {
-            get { return xPath; }
-            set { xPath = value; }
-        }
-        public int[] YPath
-        {
-            get { return yPath; }
-            set { yPath = value; }
-        }
-        public int[] DirectionPath
-        {
-            get { return directionPath; }
-            set { directionPath = value; }
-        }
-        #endregion
+        // Path color properties
+        public uint WallColor { get; set; } = 0x000000; // Default black
+        public uint PathColor { get; set; } = 0xFF00FF; // Default mangeta
+        public uint EndColor { get; set; } = 0xFF0000; // Default Red
+        public uint StartColor { get; set; } = 0x00FF00; // Default Green
+
+        // Path map properties
+        public uint Width { get { return mWidth; } }
+        public uint Height { get { return mHeight; } }
+        public uint[,] ColorArray { get { return mColorArray; } }
+        public uint[,] DistanceArray { get { return mDistanceArray; } }
+
+        // Path properties
+        public bool ListCoordinates { get; set; } = true;
+
+        /***********************************************************************************************************************/
+        public PathFinding() { }
 
         /// <summary>
-        /// Used to generate new map /// </summary>
-        /// <param name="filename"></param>
-        public void GenerateNewMap(int mapHeight, int mapWidth, uint solidValue, uint pathValue, uint[,] mapArray)
+        /// Calls SetMap with bitmap
+        /// </summary>
+        public PathFinding(BMP24Bit bitmap)
         {
-            // Sets map dimensions
-            this.mapWidth = mapWidth;
-            this.mapHeight = mapHeight;
+            SetMap(bitmap);
+        }
+        /// <summary>
+        /// Calls SetMap with uintArray
+        /// </summary>
+        public PathFinding(uint[,] uintArray, uint width, uint height)
+        {
+            SetMap(uintArray, width, height);
+        }
 
-            // Sets the defaultsoild value and path value
-            this.solidValue = solidValue;
-            this.pathValue = pathValue;
-
-            // Sets array sizes
-            this.mapArray = new uint[mapWidth, mapHeight];
-            mapDistanceArray = new uint[mapWidth, mapHeight];
-
-            // Sets the values to this map array from map array
-            for (int y = 0; y < mapHeight; y++)
-                for (int x = 0; x < mapWidth; x++)
-                    this.mapArray[x, y] = mapArray[x, y];
+        /***********************************************************************************************************************/
+        /// <summary>
+        /// Used to set a bmp image for the path map
+        /// </summary>
+        public void SetMap(BMP24Bit bitmap)
+        {
+            mWidth = (uint)bitmap.Width;
+            mHeight = (uint)bitmap.Height;
+            mColorArray = new uint[mHeight, mWidth];
+            mDistanceArray = new uint[mHeight, mWidth];
+            mBitmap = bitmap;
+        }
+        /// <summary>
+        /// Used to set a uint array for the path map
+        /// </summary>
+        public void SetMap(uint[,] uintArray, uint width, uint height)
+        {
+            mWidth = width;
+            mHeight = height;
+            mColorArray = new uint[mHeight, mWidth];
+            mDistanceArray = new uint[mHeight, mWidth];
+            mBitmap.BitmapArray = uintArray;
         }
 
         /// <summary>
-        /// Used set a value that the path finding algorithm should avoid/// </summary>
-        /// <param name="filename"></param>
-        public void AddNewSolid(uint[] valueToAvoid)
+        /// Used to save path to bitmap
+        /// </summary>
+        public void SavePathToBitmap(Stream filename, PathImage pathImage)
         {
-            for (int y = 0; y < mapHeight; y++)
-                for (int x = 0; x < mapWidth; x++)
-                    for (int i = 0; i < valueToAvoid.Length; i++)
-                        if (mapArray[x, y] == valueToAvoid[i]) mapArray[x, y] = solidValue;
+            // Genrates bitmap
+            BMP24Bit bitmap = new BMP24Bit(mWidth, mHeight);
+
+            // Sets bitmap data to the specified path image
+            switch (pathImage)
+            {
+                case PathImage.ColorImage:
+                    bitmap.BitmapArray = mColorArray;
+                    break;
+                case PathImage.WaveImage:
+                    bitmap.BitmapArray = mDistanceArray;
+                    break;
+            }
+
+            // Saves bitmap
+            bitmap.Export(filename);
         }
 
+        /***********************************************************************************************************************/
         /// <summary>
-        /// Used to draw the map /// </summary>
-        /// <param name="filename"></param>
-        public void DrawMap()
+        /// Used to generate the path map from the end position,
+        /// <para>Returns string if path map generation was successful or failed</para>
+        /// </summary>
+        public string GeneratePathMap(uint xEnd, uint yEnd, bool pathStrafe)
         {
-            for (int y = 0; y < mapHeight; y++)
+            // Reset old pathmap
+            ResetPathMap();
+
+            // Set strafe mode
+            pStrafe = pathStrafe;
+
+            // Check if out of bounds
+            if ((xEnd >= mWidth) || (yEnd >= mHeight))
+                return "Failed to generate path map, end position outside the map!";
+
+            // Used to check if end coordinates is in a wall
+            if (mColorArray[yEnd, xEnd] == WallColor)
+                return "Failed to generate path map, end position is in a wall!";
+
+            // Sets the end cordinate to distance- and color array		
+            mColorArray[yEnd, xEnd] = EndColor;
+            mDistanceArray[yEnd, xEnd] = ENDPOS;
+            GenerateNewChunks(xEnd, yEnd);
+
+            // Generates the distances
+            // While loop ends if coordinate memory is empty
+            while ((xMemory.Count != 0) || (yMemory.Count != 0)) // *** Path generation map starts here ***
             {
-                for (int x = 0; x < mapWidth; x++)
-                {
-                    if (mapArray[x, y] == solidValue) Console.Write("■");
-                    if (mapArray[x, y] == (uint)PATH.STARTPOS) Console.Write("S");
-                    if (mapArray[x, y] == (uint)PATH.ENDPOS) Console.Write("G");
-                    if (mapArray[x, y] == pathValue) Console.Write("*");
-                    if (mapArray[x, y] == 0xFFFFFF) Console.Write(" ");
-                }
-                Console.WriteLine();
-            }
-        }
-
-        //**********************************************************************************************//
-        // PATH LOGIC MAIN                                                                              //
-        //**********************************************************************************************//
-
-        // Used to check if y position is out of bounds
-        bool PositionValidY(int y)
-        {
-            if ((y < mapHeight) && (y > -1))
-                return true;
-            else return false;
-        }
-
-        // Used to check if x position is out of bounds
-        bool PositionValidX(int x)
-        {
-            if ((x < mapWidth) && (x > -1))
-                return true;
-            else return false;
-        }
-
-        // Used to discover new chunks and set them to be in queue
-        void NewPathQueue(int xCurrent, int yCurrent)
-        {
-            // Sets a new chunk to be in queue on the y axis
-            for (int y = -1; y < 2; y++)
-            {
-                // Check if position is out of bounds at y axis)
-                if (PositionValidY(y + yCurrent))
-                {
-                    if ((mapArray[y + yCurrent, xCurrent] != solidValue) &&                   // Checks if positions is not a solid wall,
-                        (mapDistanceArray[y + yCurrent, xCurrent] == emptyValue) && (y != 0)) // cell dosn't have a distance value and avoid the center 0 
-                    {                                                                             // Example
-                        mapDistanceArray[y + yCurrent, xCurrent] = (uint)PATH.CHUNK_IN_QUEUE;     // 0 Q 0
-                        xMemory.Add(xCurrent);                                                    // 0 S 0
-                        yMemory.Add(y + yCurrent);                                                // 0 Q 0
-                    }
-                }
-            }
-
-            // Sets a new chunk to be in queue on the x axis
-            for (int x = -1; x < 2; x++)
-            {
-                // Check if position is out of bounds at x axis)
-                if (PositionValidY(x + xCurrent))
-                {
-                    if ((mapArray[yCurrent, x + xCurrent] != solidValue) &&                   // Checks if positions is not a solid wall,
-                        (mapDistanceArray[yCurrent, x + xCurrent] == emptyValue) && (x != 0)) // cell dosn't have a distance value and avoid the center 0 
-                    {                                                                             // Example
-                        mapDistanceArray[yCurrent, x + xCurrent] = (uint)PATH.CHUNK_IN_QUEUE;     // 0 Q 0
-                        xMemory.Add(x + xCurrent);                                                // Q S Q
-                        yMemory.Add(yCurrent);                                                    // 0 Q 0
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Used to generate a path between to cordinates/// </summary>
-        /// <param name="filename"></param>
-        public void GeneratePath(int xStart, int yStart, int xEnd, int yEnd, bool strafeMode)
-        {
-            // Sets start and end cordinates 
-            xStartPos = xStart;
-            yStartPos = yStart;
-            xEndPos = xEnd;
-            yEndPos = yEnd;
-
-            // Variables
-            uint lowestValue = 65536;
-            uint currentValue = 0;
-            uint currentDistance = 0;
-
-            // Clear old content in the lists, if any.
-            for (int i = xMemory.Count - 1; i > -1; i--)
-            {
-                xMemory.RemoveAt(i);
-                yMemory.RemoveAt(i);
-            }
-
-            for (int i = xNewMemory.Count - 1; i > -1; i--)
-            {
-                xNewMemory.RemoveAt(i);
-                yNewMemory.RemoveAt(i);
-            }
-
-            // Debug! sets a start and end cordinate in the map array
-            mapArray[yStartPos, xStartPos] = (uint)PATH.STARTPOS;
-            mapArray[yEndPos, xEndPos] = (uint)PATH.ENDPOS;
-
-            // Sets a start cordinate                                                               // Example
-            mapDistanceArray[yStartPos, xStartPos] = (uint)PATH.STARTPOS;                           // E 0 0 0 0 0 0 0 0	  E = END	 Q = NEW_CHUNK_IN_QUEUE
-            NewPathQueue(xStartPos, yStartPos);                                                     // 0 0 0 # # # 0 0 Q	  S = START	 N = NEW_CHUNK
-                                                                                                    // 0 0 0 0 0 0 0 Q S	  # = SOLID
-                                                                                                    // Generates the distances
-            while (mapDistanceArray[yEndPos, xEndPos] == emptyValue)
-            {
-                // Checks if path is valid
-                if (xMemory.Count == 0)
-                {
-                    Console.WriteLine("NO POSSIBLE WAY!");
-                    return;
-                }
-
-                // Sets the NEW_CHUNK_IN_QUEUE to be a NEW_CHUNK to be used	
+                // Sets the CHUNK_IN_QUEUE to be a NEW_CHUNK to be used	
                 for (int i = xMemory.Count - 1; i > -1; i--)
-                {                                      // Example
-                    if (mapDistanceArray[yMemory[i], xMemory[i]] == (uint)PATH.CHUNK_IN_QUEUE)     // E 0 0 0 0 0 0 0 0   E 0 0 0 0 0 0 0 N   E 0 0 0 0 0 0 N 2   E 0 0 0 0 0 N 3 2   E 0 0 0 N 5 4 3 2   E 0 0 N 6 5 4 3 2   E 0 N 7 6 5 4 3 2   E N 8 7 6 5 4 3 2
-                    {                                                                              // 0 0 0 # # # 0 0 N   0 0 0 # # # 0 N 1   0 0 0 # # # N 2 1   0 0 0 # # # 3 2 1   0 0 0 # # # 3 2 1   0 0 N # # # 3 2 1   0 N 7 # # # 3 2 1   N 8 7 # # # 3 2 1
-                        mapDistanceArray[yMemory[i], xMemory[i]] = (uint)PATH.NEW_CHUNK;           // 0 0 0 0 0 0 0 N S   0 0 0 0 0 0 N 1 S   0 0 0 0 0 N 2 1 S   0 0 0 0 N 3 2 1 S   0 0 N 5 4 3 2 1 S   0 N 6 5 4 3 2 1 S   N 7 6 5 4 3 2 1 S   8 7 6 5 4 3 2 1 S
-
-                        // Memory change
-                        xNewMemory.Add(xMemory[i]);
-                        yNewMemory.Add(yMemory[i]);
-                        xMemory.RemoveAt(i);
-                        yMemory.RemoveAt(i);
-                    }
+                {
+                    mDistanceArray[yMemory[i], xMemory[i]] = NEW_CHUNK;
+                    xNewMemory.Add(xMemory[i]); yNewMemory.Add(yMemory[i]);
+                    xMemory.RemoveAt(i); yMemory.RemoveAt(i);
                 }
-                currentDistance += 1; // Counts the distance
+
+                // Counts the distance
+                pCurrentDistance += 1;
 
                 // Replaces the NEW_CHUNK to be a distance			
                 for (int i = xNewMemory.Count - 1; i > -1; i--)
-                {                                   // Example
-                    if (mapDistanceArray[yNewMemory[i], xNewMemory[i]] == (uint)PATH.NEW_CHUNK)    // E 0 0 0 0 0 0 0 Q   E 0 0 0 0 0 0 Q 2   E 0 0 0 0 0 Q 3 2   E 0 0 0 0 Q 4 3 2   E 0 0 Q 6 5 4 3 2   E 0 Q 7 6 5 4 3 2   E Q 8 7 6 5 4 3 2   E 9 8 7 6 5 4 3 2
-                    {                                                                              // 0 0 0 # # # 0 Q 1   0 0 0 # # # Q 2 1   0 0 0 # # # 3 2 1   0 0 0 # # # 3 2 1   0 0 Q # # # 3 2 1   0 Q 7 # # # 3 2 1   Q 8 7 # # # 3 2 1   9 8 7 # # # 3 2 1
-                        mapDistanceArray[yNewMemory[i], xNewMemory[i]] = currentDistance;          // 0 0 0 0 0 0 Q 1 S   0 0 0 0 0 Q 2 1 S   0 0 0 0 Q 3 2 1 S   0 0 0 Q 4 3 2 1 S   0 Q 6 5 4 3 2 1 S   Q 7 6 5 4 3 2 1 S   8 7 6 5 4 3 2 1 S   8 7 6 5 4 3 2 1 S
-                        NewPathQueue(xNewMemory[i], yNewMemory[i]);
-
-                        // Memory change
-                        xNewMemory.RemoveAt(i);
-                        yNewMemory.RemoveAt(i);
-                    }
+                {
+                    mDistanceArray[yNewMemory[i], xNewMemory[i]] = pCurrentDistance;
+                    GenerateNewChunks(xNewMemory[i], yNewMemory[i]);
+                    xNewMemory.RemoveAt(i); yNewMemory.RemoveAt(i);
                 }
             }
+            return "The path map has been generated successfully!";
+        }
 
-            // Sets the pathchecker position to endposition
-            xPathCheck = xEndPos;
-            yPathCheck = yEndPos;
+        // Used to reset old path map
+        private void ResetPathMap()
+        {
+            // Reset distance
+            pCurrentDistance = 0;
 
-            // Path Coordinate Set
-            lengthPath = (int)currentDistance;
-            pathCurrentlocation = lengthPath - 1;
-            xPath = new int[lengthPath];
-            yPath = new int[lengthPath];
-            directionPath = new int[lengthPath];
+            // Clear old memory
+            xMemory.Clear(); yMemory.Clear();
+            xNewMemory.Clear(); yNewMemory.Clear();
 
-            // Generates the path
-            while (true)
+            // Sets distance array to UNSET
+            for (int y = 0; y < mHeight; y++)
             {
-                lowestValue = 65536; // Sets the lowestValue to highest possible
-
-                // When stafeMode is false then the path is allowed to go all directions
-                if (strafeMode == true)
+                for (int x = 0; x < mWidth; x++)
                 {
-                    for (int y = -1; y < 2; y++)
-                    {
-                        for (int x = -1; x < 2; x++)
-                        {
-                            // Check if position is out of bounds at x- and y axis 
-                            if ((PositionValidX(x + xPathCheck)) && (PositionValidY(y + yPathCheck)))
-                            {
-                                // Checks what value is lowest in the neighbour spaces
-                                if (mapDistanceArray[y + yPathCheck, x + xPathCheck] != emptyValue)
-                                {
-                                    currentValue = mapDistanceArray[y + yPathCheck, x + xPathCheck];
-                                    if (currentValue < lowestValue)
-                                        lowestValue = currentValue;
-                                }
-                                // Stops the while loop when it hits startpos
-                                if (mapDistanceArray[y + yPathCheck, x + xPathCheck] == (uint)PATH.STARTPOS)
-                                    return;
-                            }
-                        }
-                    }
-                }
-                else   // When stafeMode is true then the path is only allowed to go up & down, left & right
-                {
-                    // First checks y axis
-                    for (int y = -1; y < 2; y++)
-                    {
-                        // Check if position is out of bounds at y axis)
-                        if (PositionValidY(y + yPathCheck))
-                        {
-                            // Checks what value is lowest in the neighbour spaces
-                            if (mapDistanceArray[y + yPathCheck, xPathCheck] != emptyValue)
-                            {
-                                currentValue = mapDistanceArray[y + yPathCheck, xPathCheck];
-                                if (currentValue < lowestValue)
-                                    lowestValue = currentValue;
-                            }
-                            // Stops the while loop when it hits startpos
-                            if (mapDistanceArray[y + yPathCheck, xPathCheck] == (uint)PATH.STARTPOS)
-                                return;
-                        }
-                    }
-
-                    // Then checks x axis
-                    for (int x = -1; x < 2; x++)
-                    {
-                        // Check if position is out of bounds at x axis
-                        if (PositionValidX(x + xPathCheck))
-                        {
-                            // Checks what value is lowest in the neighbour spaces
-                            if (mapDistanceArray[yPathCheck, x + xPathCheck] != emptyValue)
-                            {
-                                currentValue = mapDistanceArray[yPathCheck, x + xPathCheck];
-                                if (currentValue < lowestValue)
-                                    lowestValue = currentValue;
-                            }
-                            // Stops the while loop when it hits startpos
-                            if (mapDistanceArray[yPathCheck, x + xPathCheck] == (uint)PATH.STARTPOS)
-                                return;
-                        }
-                    }
-                }
-
-                // Then set a marker and go one forward in the path
-                for (int y = -1; y < 2; y++)
-                {
-                    for (int x = -1; x < 2; x++)
-                    {
-                        // Check if position is out of bounds at x- and y axis 
-                        if ((PositionValidX(x + xPathCheck)) && (PositionValidY(y + yPathCheck)))
-                        {
-                            if (mapDistanceArray[y + yPathCheck, x + xPathCheck] == lowestValue)
-                            {
-                                // Set a marker
-                                mapArray[y + yPathCheck, x + xPathCheck] = pathValue;
-
-                                // Stores the driection in array :)
-                                if ((y == 1) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT_UP;
-                                if ((y == 1) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT_UP;
-                                if ((y == -1) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT_DOWN;
-                                if ((y == -1) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT_DOWN;
-
-                                if ((y == 1) && (x == 0)) directionPath[pathCurrentlocation] = (int)PATH_D.UP;
-                                if ((y == -1) && (x == 0)) directionPath[pathCurrentlocation] = (int)PATH_D.DOWN;
-                                if ((y == 0) && (x == 1)) directionPath[pathCurrentlocation] = (int)PATH_D.LEFT;
-                                if ((y == 0) && (x == -1)) directionPath[pathCurrentlocation] = (int)PATH_D.RIGHT;
-
-                                // Stores the location in array
-                                xPath[pathCurrentlocation] = x + xPathCheck;
-                                yPath[pathCurrentlocation] = y + yPathCheck;
-                                pathCurrentlocation -= 1;
-
-                                // Move path check
-                                xPathCheck += x;
-                                yPathCheck += y;
-
-                                // Stop loop
-                                y = 2; x = 2;
-
-                            }
-                        }
-                    }
+                    mDistanceArray[y, x] = UNSET;
+                    mColorArray[y, x] = mBitmap.BitmapArray[y, x];
                 }
             }
+        }
+
+        // Used to set a new chunk to be in queue on the y and x axis		
+        private void SetNewChunk(uint x, uint y)
+        {
+            // Check for out of bounds
+            if ((x >= mWidth) || (y >= mHeight))
+                return;
+
+            // Checks for valid cell then add coordinate to memory
+            if ((mColorArray[y, x] != WallColor) && (mDistanceArray[y, x] == UNSET))
+            {
+                mDistanceArray[y, x] = CHUNK_IN_QUEUE;
+                xMemory.Add(x); yMemory.Add(y);
+            }
+            // If cell is a wall then mark it as solid
+            else if (mColorArray[y, x] == WallColor)
+                mDistanceArray[y, x] = SOLID;
+        }
+
+        // Calls SetNewChunk multiple times
+        private void GenerateNewChunks(uint x, uint y)
+        {
+            for (int i = -1; i < 2; i++)
+            {
+                SetNewChunk((uint)((int)(i + x)), y);
+                SetNewChunk(x, (uint)(int)(i + y));
+                if (pStrafe == true)
+                    SetNewChunk((uint)((int)(i + x)), (uint)(int)(i + y));
+            }
+        }
+
+        /***********************************************************************************************************************/
+        /// <summary>
+        /// Used to generate path from start position
+        /// <para>Returns a list array of x cordinates, y cordinates and direction index</para>
+        /// </summary>
+        public List<uint>[] GeneratePath(uint xStart, uint yStart)
+        {
+            // Generate path coordinate list
+            List<uint>[] pathCordinates = new List<uint>[3];
+
+            // Check if out of bounds
+            if ((xStart >= mWidth) || (yStart >= mHeight))
+                return pathCordinates;
+
+            // Check if start position is in a invalid cell
+            if ((mDistanceArray[yStart, xStart] == SOLID) || (mDistanceArray[yStart, xStart] == UNSET))
+                return pathCordinates;
+
+            // Set list definition
+            pathCordinates[LIST_XCOORD] = new List<uint>();
+            pathCordinates[LIST_YCOORD] = new List<uint>();
+            pathCordinates[LIST_DIRECTION] = new List<uint>();
+
+            // Path coordinates
+            uint xPathCheck = xStart;
+            uint yPathCheck = yStart;
+            uint xClosest = 0, yClosest = 0;
+
+            // Set path values
+            uint pCurrentValue = 0;
+            uint pLowestValue = 0xFFFFFFFF;
+
+            // Sets start position color
+            mColorArray[yStart, xStart] = StartColor;
+
+            // Used to check lowest distance value
+            bool CheckLowestValue(uint x, uint y)
+            {
+                // Check if out of bounds
+                if ((x >= mWidth) || (y >= mHeight))
+                    return false;
+
+                // Checks if the values is lower than the previews value
+                pCurrentValue = mDistanceArray[y, x];
+                if (pCurrentValue <= pLowestValue)
+                {
+                    pLowestValue = pCurrentValue;
+                    xClosest = x; yClosest = y;
+                }
+
+                // Stops the while loop when it hits the end position
+                if (mDistanceArray[y, x] == ENDPOS)
+                    return true;
+                return false;
+            }
+
+            while (true) // *** Path generation starts here ***
+            {
+                // Checks strafemode state
+                switch (pStrafe)
+                {
+                    case true: // Used to check the surrounding cells for lowest value in all directions
+                        for (uint i = 0; i < 3; i++)
+                            if ((CheckLowestValue(xPathCheck + i - 1, yPathCheck)) || (CheckLowestValue(xPathCheck, yPathCheck + i - 1)) || (CheckLowestValue(xPathCheck + i - 1, yPathCheck + i - 1)))
+                                return pathCordinates;
+                        break;
+                    case false: // Used to check the surrounding cells for lowest value horzontal and vertical direction only
+                        for (uint i = 0; i < 3; i++)
+                            if ((CheckLowestValue(xPathCheck + i - 1, yPathCheck)) || (CheckLowestValue(xPathCheck, yPathCheck + i - 1)))
+                                return pathCordinates;
+                        break;
+                }
+
+                if (ListCoordinates == true)
+                {
+                    // Updates list
+                    pathCordinates[LIST_XCOORD].Add(xClosest);
+                    pathCordinates[LIST_YCOORD].Add(yClosest);
+                    pathCordinates[LIST_DIRECTION].Add((uint)GetDirection((int)(xPathCheck - xClosest), (int)(yPathCheck - yClosest)));
+                }
+
+                // Sets path color and updates position to closest cell 
+                mColorArray[yClosest, xClosest] = PathColor;
+                xPathCheck = xClosest; yPathCheck = yClosest;
+            }
+        }
+
+        // Used to get the direction
+        private PathDirection GetDirection(int x, int y)
+        {
+            if ((x == 0) && (y == 1)) return PathDirection.Up;
+            if ((x == 0) && (y == -1)) return PathDirection.Down;
+            if ((x == -1) && (y == 0)) return PathDirection.Right;
+            if ((x == 1) && (y == 0)) return PathDirection.Left;
+            if ((x == -1) && (y == 1)) return PathDirection.TopRightCorner;
+            if ((x == -1) && (y == -1)) return PathDirection.LowerRightCorner;
+            if ((x == 1) && (y == 1)) return PathDirection.TopLeftCorner;
+            if ((x == 1) && (y == -1)) return PathDirection.LowerLeftCorner;
+            return 0;
         }
     }
 }
